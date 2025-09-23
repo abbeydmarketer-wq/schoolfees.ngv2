@@ -94,7 +94,7 @@ export const triggerPayslipPrint = (
         const root = ReactDOM.createRoot(printRootEl);
         root.render(React.createElement(PayslipTemplate, {
             payslip,
-            member,
+            teamMember: member,
             school,
         }));
         
