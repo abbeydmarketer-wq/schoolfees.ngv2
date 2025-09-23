@@ -11,11 +11,14 @@ export interface School {
   currentSession: string;
   currentTerm: string;
   planId: string;
+  subscriptionEndDate?: string;
   students: Student[];
   staff: Staff[];
   applicants: Applicant[];
   feeDefinitions: FeeDefinition[];
   settings: SchoolSettings;
+  smsSettings: SMSSettings;
+  communicationSettings: CommunicationSettings;
   otherIncome: Income[];
   expenditures: Expenditure[];
 }
@@ -194,6 +197,37 @@ export interface SchoolSettings {
   gradeSystem: string;
   paymentMethods: string[];
   notifications: NotificationSettings;
+}
+
+export interface SMSSettings {
+  manualTemplates?: SMSTemplate[];
+}
+
+export interface CommunicationSettings {
+  manualTemplates: CommunicationTemplate[];
+  transactionalNotifications?: TransactionalNotifications;
+}
+
+export interface TransactionalNotifications {
+  paymentConfirmation?: {
+    emailSubject: string;
+    emailTemplate: string;
+  };
+}
+
+export interface SMSTemplate {
+  id: string;
+  name: string;
+  type: 'reminder' | 'receipt' | 'general';
+  body: string;
+}
+
+export interface CommunicationTemplate {
+  id: string;
+  name: string;
+  type: 'reminder' | 'receipt' | 'general';
+  subject: string;
+  body: string;
 }
 
 export interface NotificationSettings {

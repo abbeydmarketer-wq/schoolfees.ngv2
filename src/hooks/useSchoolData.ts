@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { School, PlatformConfig } from '../types';
+import { School, PlatformConfig } from '../types.ts';
 import { getSupabase } from '../supabaseClient';
 
 interface UseSchoolDataReturn {
@@ -24,6 +24,19 @@ const mockSchools: School[] = [
     planId: 'basic',
     students: [],
     staff: [],
+    applicants: [],
+    smsSettings: { manualTemplates: [] },
+    communicationSettings: { 
+      manualTemplates: [],
+      transactionalNotifications: {
+        paymentConfirmation: {
+          emailSubject: "Payment Confirmation",
+          emailTemplate: "Thank you for your payment."
+        }
+      }
+    },
+    otherIncome: [],
+    expenditures: [],
     feeDefinitions: [
       {
         id: 'fee-1',

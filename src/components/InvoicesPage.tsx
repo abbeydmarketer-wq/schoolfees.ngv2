@@ -89,8 +89,8 @@ const InvoicesPage: React.FC<InvoicesPageProps> = ({ school }) => {
                             {filteredStudents.map(student => (
                                 <tr key={student.id} className="bg-white border-b hover:bg-gray-50">
                                     <td className="px-6 py-4 font-medium text-gray-900">{student.name}<br/><span className="text-xs text-gray-500">{student.class}</span></td>
-                                    <td className="px-6 py-4 font-mono">₦{student.totalFees.toLocaleString()}</td>
-                                    <td className="px-6 py-4 font-mono">₦{student.amountPaid.toLocaleString()}</td>
+                                    <td className="px-6 py-4 font-mono">₦{((student.amountPaid || 0) + student.outstandingFees).toLocaleString()}</td>
+                                    <td className="px-6 py-4 font-mono">₦{(student.amountPaid ?? 0).toLocaleString()}</td>
                                     <td className="px-6 py-4 font-mono font-semibold text-red-600">₦{student.outstandingFees.toLocaleString()}</td>
                                     <td className="px-6 py-4">{student.fees[0] ? new Date(student.fees[0].dueDate).toLocaleDateString() : 'N/A'}</td>
                                     <td className="px-6 py-4">{getStatusBadge(student)}</td>

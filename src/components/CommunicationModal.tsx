@@ -36,8 +36,10 @@ const CommunicationModal: React.FC<CommunicationModalProps> = ({ school, action,
         
         // Also add the transactional email as a receipt template
         if (action.type === 'receipt') {
-            const pa = school.communicationSettings.transactionalNotifications.paymentConfirmation;
-            emailTemplates.unshift({ id: 'transactional_receipt', name: 'Default Payment Confirmation', subject: pa.emailSubject, body: pa.emailTemplate, channel: 'email' });
+            const pa = school.communicationSettings.transactionalNotifications?.paymentConfirmation;
+            if (pa) {
+                emailTemplates.unshift({ id: 'transactional_receipt', name: 'Default Payment Confirmation', subject: pa.emailSubject, body: pa.emailTemplate, channel: 'email' });
+            }
         }
 
         return [...smsTemplates, ...emailTemplates];
