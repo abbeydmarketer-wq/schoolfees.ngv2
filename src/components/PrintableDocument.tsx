@@ -1,19 +1,33 @@
 import React from 'react';
+import { Student, School } from '../types';
+import { TemplateId } from './PrintCenter';
 
 export interface PrintableDocumentProps {
-  title: string;
-  children: React.ReactNode;
+  title?: string;
+  children?: React.ReactNode;
   className?: string;
   headerContent?: React.ReactNode;
   footerContent?: React.ReactNode;
+  students?: Student[];
+  type?: 'invoice' | 'receipt' | 'reminder';
+  school?: School;
+  template?: TemplateId;
+  themeColor?: string;
+  paperSaver?: boolean;
 }
 
 const PrintableDocument: React.FC<PrintableDocumentProps> = ({ 
-  title, 
+  title = 'Document', 
   children, 
   className = '',
   headerContent,
-  footerContent 
+  footerContent,
+  students,
+  type,
+  school,
+  template,
+  themeColor,
+  paperSaver
 }) => {
   return (
     <div className={`printable-document ${className}`}>
