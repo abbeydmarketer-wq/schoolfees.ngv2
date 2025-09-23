@@ -206,7 +206,7 @@ export interface BlogPost {
   excerpt: string;
   slug: string;
   imageUrl?: string;
-  status: 'draft' | 'Published';
+  status: 'draft' | 'published';
   createdAt: string;
   updatedAt: string;
   author: string;
