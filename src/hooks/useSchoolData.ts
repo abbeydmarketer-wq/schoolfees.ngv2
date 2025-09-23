@@ -24,6 +24,7 @@ const mockSchools: School[] = [
     planId: 'basic',
     students: [],
     staff: [],
+    teamMembers: [],
     applicants: [],
     smsSettings: { manualTemplates: [] },
     communicationSettings: { 

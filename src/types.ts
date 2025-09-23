@@ -6,6 +6,7 @@ export interface School {
   address: string;
   email: string;
   phone: string;
+  contactPhone?: string;
   logo?: string;
   slug: string;
   currentSession: string;
@@ -14,13 +15,21 @@ export interface School {
   subscriptionEndDate?: string;
   students: Student[];
   staff: Staff[];
+  teamMembers: TeamMember[];
   applicants: Applicant[];
   feeDefinitions: FeeDefinition[];
-  settings: SchoolSettings;
-  smsSettings: SMSSettings;
-  communicationSettings: CommunicationSettings;
+  settings?: SchoolSettings;
+  smsSettings?: SMSSettings;
+  communicationSettings?: CommunicationSettings;
   otherIncome: Income[];
   expenditures: Expenditure[];
+  adminUser?: {name: string; email: string};
+  cancellationPending?: boolean;
+  landingPageContent?: any;
+  paymentSettings?: any;
+  payrollSettings?: PayrollSettings;
+  pendingPlanId?: string | null;
+  created_at?: string;
 }
 
 export interface Student {
@@ -203,18 +212,32 @@ export interface SchoolSettings {
 }
 
 export interface SMSSettings {
+  enabledGateway?: string | null;
+  gatewayCredentials?: any;
+  reminderTemplate?: string;
   manualTemplates?: SMSTemplate[];
 }
 
 export interface CommunicationSettings {
+  emailProvider?: string;
+  smtpSettings?: any;
+  whatsappProvider?: string;
+  whatsappApiSettings?: any;
+  automatedReminders?: {
+    enabled: boolean;
+    daysAfterDueDate: number;
+  };
   manualTemplates: CommunicationTemplate[];
   transactionalNotifications?: TransactionalNotifications;
 }
 
 export interface TransactionalNotifications {
   paymentConfirmation?: {
+    enabled?: boolean;
     emailSubject: string;
     emailTemplate: string;
+    smsTemplate?: string;
+    whatsappTemplate?: string;
   };
 }
 
@@ -384,12 +407,15 @@ export interface TeamMember extends Staff {
   department?: string;
   permissions?: string[];
   salaryInfo?: SalaryInfo;
+  assignedClasses?: string[];
 }
 
 // Payroll related interfaces
 export interface PayrollSettings {
   payrollCycle: 'monthly' | 'bi-weekly' | 'weekly';
   defaultDeductions: Deduction[];
+  employeePensionRate: number;
+  payeBrackets: Array<{upTo: number; rate: number}>;
   bankDetails: {
     accountName: string;
     accountNumber: string;
@@ -400,7 +426,10 @@ export interface PayrollSettings {
 export interface Payslip {
   id: string;
   staffId: string;
+  teamMemberId?: string;
   period: string;
+  year: number;
+  month: number;
   basicSalary: number;
   allowances: Allowance[];
   deductions: Deduction[];
@@ -435,6 +464,17 @@ export interface Discount {
   validTo: string;
   maxUsage?: number;
   currentUsage: number;
+}
+
+// School registration data interface
+export interface NewSchoolRegistrationData {
+  username: string;
+  schoolName: string;
+  schoolEmail: string;
+  schoolAddress: string;
+  schoolPhone: string;
+  adminName: string;
+  adminEmail: string;
 }
 
 // Export statement removed - using individual exports instead

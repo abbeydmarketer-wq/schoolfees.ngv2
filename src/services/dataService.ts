@@ -19,7 +19,7 @@ import {
     Term,
     PayrollSettings
 } from '../types.ts';
-import { NewSchoolRegistrationData } from '../components/SignUpPage.tsx';
+import type { NewSchoolRegistrationData } from '../types.ts';
 import { mockPlatformConfig, mockSchools } from './mockData.ts';
 
 export { ALL_SCHOOL_CLASSES } from './constants.ts';
@@ -138,8 +138,11 @@ export const registerSchool = async (data: NewSchoolRegistrationData & {password
             slug: slug,
             name: data.schoolName,
             address: data.schoolAddress,
+            email: data.schoolEmail,
+            phone: data.schoolPhone,
             contactPhone: data.schoolPhone,
             students: [],
+            staff: [],
             teamMembers: [],
             applicants: [],
             feeDefinitions: [],
@@ -153,7 +156,17 @@ export const registerSchool = async (data: NewSchoolRegistrationData & {password
             otherIncome: [],
             expenditures: [],
             paymentSettings: { enabledGateways: ['paystack'], gatewayCredentials: {}, bankDetails: { bankName: 'First Bank', accountName: data.schoolName, accountNumber: '1234567890' }},
-            payrollSettings: { employeePensionRate: 0.08, payeBrackets: []},
+            payrollSettings: { 
+                payrollCycle: 'monthly', 
+                defaultDeductions: [], 
+                employeePensionRate: 0.08, 
+                payeBrackets: [],
+                bankDetails: {
+                    accountName: data.schoolName,
+                    accountNumber: '1234567890',
+                    bankName: 'First Bank'
+                }
+            },
             smsSettings: { enabledGateway: null, gatewayCredentials: {}, reminderTemplate: '', manualTemplates: []},
             communicationSettings: { emailProvider: 'feepilot', smtpSettings: {}, whatsappProvider: 'manual', whatsappApiSettings: {}, automatedReminders: { enabled: false, daysAfterDueDate: 7}, transactionalNotifications: { paymentConfirmation: { enabled: true, emailSubject: 'Payment Confirmation', emailTemplate: 'Thank you for your payment.', smsTemplate: '', whatsappTemplate: '' }}, manualTemplates: []},
             pendingPlanId: null,
@@ -401,10 +414,12 @@ export const addExpenditure = async (schoolId: string, expenditureData: Omit<Exp
 export const runPayrollForSchool = async (schoolId: string, payslips: Payslip[], totalPayroll: number): Promise<void> => {
     const payrollExpenditure: Expenditure = {
         id: `exp_payroll_${Date.now()}`,
+        type: 'expense',
         description: `Payroll for ${new Date(payslips[0].year, payslips[0].month).toLocaleString('default', { month: 'long', year: 'numeric' })}`,
         category: 'Salaries',
         amount: totalPayroll,
         date: new Date().toISOString(),
+        status: 'completed'
     };
     await updateSchoolData(schoolId, school => {
         const updatedTeamMembers = school.teamMembers.map(member => {
@@ -511,16 +526,17 @@ export const calculatePayrollForMember = (member: TeamMember, year: number, mont
     
     return { 
         id: `payslip_${member.id}_${year}_${month}`, 
+        staffId: member.id,
         teamMemberId: member.id, 
+        period: `${year}-${month.toString().padStart(2, '0')}`,
         year, 
         month, 
-        baseSalary, 
+        basicSalary: baseSalary, 
         allowances, 
-        deductions, 
-        grossSalary, 
-        payeTax, 
-        pension, 
-        totalDeductions, 
-        netSalary 
+        deductions: [...deductions, { id: 'pension', name: 'Pension', amount: pension, type: 'fixed', mandatory: true }, { id: 'paye', name: 'PAYE Tax', amount: payeTax, type: 'fixed', mandatory: true }], 
+        grossPay: grossSalary, 
+        netPay: netSalary,
+        status: 'draft',
+        generatedAt: new Date().toISOString()
     };
 };
