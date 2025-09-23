@@ -3,6 +3,7 @@ import useSchoolData from './hooks/useSchoolData.ts';
 import useThemeManager from './hooks/useThemeManager.ts';
 import { CurrentUser, View, School, Student } from './types.ts';
 import { onAuthStateChange, signOut, signIn } from './services/authService.ts';
+import { normalizePlatformConfig } from './utils/normalizePlatformConfig.ts';
 import AuthPage from './components/AuthPage.tsx';
 import SchoolLandingPage from './components/SchoolLandingPage.tsx';
 import Dashboard from './components/Dashboard.tsx';
@@ -44,11 +45,8 @@ const App: React.FC = () => {
     const [impersonatedSchool, setImpersonatedSchool] = useState<School | null>(null);
 
     // Apply dynamic theme from platformConfig
-    const themeColors = platformConfig?.websiteContent.theme === 'blue' ? {
-        primary: '#3B82F6',
-        secondary: '#1E40AF', 
-        accent: '#06B6D4'
-    } : undefined;
+    const normalizedConfig = platformConfig ? normalizePlatformConfig(platformConfig) : null;
+    const themeColors = normalizedConfig?.websiteContent?.theme;
     useThemeManager(themeColors);
 
     // Check for school-specific subdomain on initial load
@@ -111,8 +109,8 @@ const App: React.FC = () => {
         if (schoolForSubdomain) {
             return <SchoolLandingPage school={schoolForSubdomain} onLogin={handleLogin} />;
         }
-        if (platformConfig) {
-            return <AuthPage platformConfig={platformConfig} />;
+        if (normalizedConfig) {
+            return <AuthPage platformConfig={normalizedConfig} />;
         }
         return <LoadingSpinner />;
     }
@@ -131,19 +129,19 @@ const App: React.FC = () => {
     }
 
     // Main Admin Dashboard View
-    if (currentUser.role === 'schoolAdmin' && activeSchool && platformConfig) {
+    if (currentUser.role === 'schoolAdmin' && activeSchool && normalizedConfig) {
         const renderMainContent = () => {
             switch (activeView) {
-                case 'Dashboard': return <Dashboard school={activeSchool} platformConfig={platformConfig} />;
+                case 'Dashboard': return <Dashboard school={activeSchool} platformConfig={normalizedConfig} />;
                 case 'Students': return <StudentsView school={activeSchool} refreshData={refreshData} />;
                 case 'Team': return <TeamPage school={activeSchool} refreshData={refreshData} />;
                 case 'Reports': return <ReportsPage school={activeSchool} />;
-                case 'Communication': return <CommunicationPage school={activeSchool} platformConfig={platformConfig} />;
-                case 'Printing': return <PrintCenter school={activeSchool} platformConfig={platformConfig} />;
+                case 'Communication': return <CommunicationPage school={activeSchool} platformConfig={normalizedConfig} />;
+                case 'Printing': return <PrintCenter school={activeSchool} platformConfig={normalizedConfig} />;
                 case 'Settings': return <SettingsPage school={activeSchool} refreshData={refreshData} />;
-                case 'AI Insights': return <AiInsightsPage school={activeSchool} plan={platformConfig.pricingPlans.find(p => p.id === activeSchool.planId)} onUpgrade={() => alert('Upgrade flow not implemented.')} />;
+                case 'AI Insights': return <AiInsightsPage school={activeSchool} plan={normalizedConfig.pricingPlans.find(p => p.id === activeSchool.planId)} onUpgrade={() => alert('Upgrade flow not implemented.')} />;
                 case 'Admissions': return <AdmissionsPage school={activeSchool} refreshData={refreshData} onEnrollStudent={handleEnrollStudent} />;
-                case 'Knowledge Base': return <KnowledgeBasePage articles={platformConfig.knowledgeBaseArticles} />;
+                case 'Knowledge Base': return <KnowledgeBasePage articles={normalizedConfig.knowledgeBaseArticles} />;
                 case 'Bursary': // Fallback for bursary parent view
                 case 'Student Payments':
                 case 'Invoices & Receipts':
@@ -153,7 +151,7 @@ const App: React.FC = () => {
                 case 'Reconciliation':
                 case 'Fee Structure':
                     return <BursaryPage school={activeSchool} refreshData={refreshData} activeSubView={activeView} setActiveSubView={(view) => setActiveView(view)} />;
-                default: return <Dashboard school={activeSchool} platformConfig={platformConfig} />;
+                default: return <Dashboard school={activeSchool} platformConfig={normalizedConfig} />;
             }
         };
 
@@ -171,13 +169,13 @@ const App: React.FC = () => {
                     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
                     <DesktopSidebar activeView={activeView} setActiveView={setActiveView} onLogout={handleLogout} />
                 </div>
-                <AiChatbot school={activeSchool} platformConfig={platformConfig} onGuideRequest={(view) => setActiveView(view as View)} activeView={activeView} />
+                <AiChatbot school={activeSchool} platformConfig={normalizedConfig} onGuideRequest={(view) => setActiveView(view as View)} activeView={activeView} />
             </div>
         );
     }
     
     // SuperAdmin View
-    if (currentUser.role === 'superAdmin' && platformConfig) {
+    if (currentUser.role === 'superAdmin' && normalizedConfig) {
        // Placeholder for the SuperAdmin CMS dashboard
         return <div>Super Admin CMS Dashboard not yet implemented.</div>;
     }
