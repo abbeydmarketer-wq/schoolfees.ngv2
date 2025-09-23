@@ -132,7 +132,11 @@ export interface WebsiteContent {
     title: string;
     items: Testimonial[];
   };
-  theme: string;
+  theme: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
   logo?: string;
   contactInfo: ContactInfo;
 }
