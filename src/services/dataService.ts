@@ -17,7 +17,15 @@ import {
     PaymentAllocation,
     UserRole,
     Term,
-    PayrollSettings
+    PayrollSettings,
+    ParentPortalData,
+    TeacherClassData,
+    StaffPortalData,
+    AttendanceRecord,
+    GradeRecord,
+    MessageThread,
+    Receipt,
+    Message
 } from '../types.ts';
 import type { NewSchoolRegistrationData } from '../types.ts';
 import { mockPlatformConfig, mockSchools } from './mockData.ts';
@@ -539,5 +547,265 @@ export const calculatePayrollForMember = (member: TeamMember, year: number, mont
         netPay: netSalary,
         status: 'draft',
         generatedAt: new Date().toISOString()
+    };
+};
+
+// ===== ROLE-BASED DASHBOARD SERVICES =====
+
+// Helper function to check role permissions
+const checkRolePermission = (currentUser: CurrentUser, requiredRole: string, schoolId?: string): boolean => {
+    if (!currentUser) return false;
+    if (currentUser.role !== requiredRole) return false;
+    if (schoolId && 'schoolId' in currentUser && currentUser.schoolId !== schoolId) return false;
+    return true;
+};
+
+// PARENT PORTAL SERVICES
+export const getParentPortalData = async (currentUser: CurrentUser): Promise<ParentPortalData | null> => {
+    if (currentUser.role !== 'parent' || !('childrenIds' in currentUser)) {
+        throw new Error('Access denied: Parent role required');
+    }
+
+    const schools = await getSchools();
+    const school = schools.find(s => s.id === currentUser.schoolId);
+    if (!school) return null;
+
+    const children = school.students.filter(student => 
+        currentUser.childrenIds?.includes(student.id)
+    );
+
+    const totalOutstandingFees = children.reduce((sum, child) => sum + child.outstandingFees, 0);
+
+    const recentPayments: Payment[] = children.flatMap(child => 
+        child.payments?.slice(-5) || []
+    ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    const messageThreads: MessageThread[] = []; // TODO: Implement messaging system
+    
+    const receipts: Receipt[] = children.flatMap(child => 
+        (child.payments || []).map(payment => ({
+            id: `receipt_${payment.id}`,
+            studentId: child.id,
+            studentName: child.name,
+            amount: payment.amount,
+            paymentMethod: payment.method,
+            paymentReference: payment.id,
+            feesPaid: [{ feeType: payment.description, amount: payment.amount }],
+            issueDate: payment.date,
+            issuedBy: 'System',
+            schoolName: school.name,
+            session: school.currentSession,
+            term: school.currentTerm as Term,
+            receiptNumber: `RCP${payment.id.slice(-6).toUpperCase()}`
+        }))
+    ).slice(-10);
+
+    return {
+        children,
+        totalOutstandingFees,
+        recentPayments,
+        messageThreads,
+        receipts
+    };
+};
+
+// TEACHER PORTAL SERVICES
+export const getTeacherClassesData = async (currentUser: CurrentUser): Promise<TeacherClassData[]> => {
+    if (currentUser.role !== 'teacher' || !('assignedClasses' in currentUser)) {
+        throw new Error('Access denied: Teacher role required');
+    }
+
+    const schools = await getSchools();
+    const school = schools.find(s => s.id === currentUser.schoolId);
+    if (!school) return [];
+
+    const classesData: TeacherClassData[] = currentUser.assignedClasses?.map(className => {
+        const students = school.students.filter(student => student.class === className);
+        
+        return {
+            class: className,
+            students,
+            attendanceRecords: [], // TODO: Load from storage
+            gradeRecords: [], // TODO: Load from storage
+            recentMessages: [] // TODO: Load from messaging system
+        };
+    }) || [];
+
+    return classesData;
+};
+
+export const recordAttendance = async (currentUser: CurrentUser, attendanceData: Omit<AttendanceRecord, 'id' | 'recordedBy' | 'recordedAt'>): Promise<AttendanceRecord> => {
+    if (currentUser.role !== 'teacher') {
+        throw new Error('Access denied: Teacher role required');
+    }
+
+    const record: AttendanceRecord = {
+        ...attendanceData,
+        id: `att_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        recordedBy: currentUser.id,
+        recordedAt: new Date().toISOString()
+    };
+
+    // TODO: Persist to database/storage
+    console.log('Attendance recorded:', record);
+    
+    return record;
+};
+
+export const recordGrade = async (currentUser: CurrentUser, gradeData: Omit<GradeRecord, 'id' | 'recordedBy' | 'recordedAt'>): Promise<GradeRecord> => {
+    if (currentUser.role !== 'teacher') {
+        throw new Error('Access denied: Teacher role required');
+    }
+
+    const record: GradeRecord = {
+        ...gradeData,
+        id: `grade_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        recordedBy: currentUser.id,
+        recordedAt: new Date().toISOString()
+    };
+
+    // TODO: Persist to database/storage
+    console.log('Grade recorded:', record);
+    
+    return record;
+};
+
+// STAFF PORTAL SERVICES
+export const getStaffPortalData = async (currentUser: CurrentUser): Promise<StaffPortalData | null> => {
+    if (currentUser.role !== 'staff') {
+        throw new Error('Access denied: Staff role required');
+    }
+
+    const schools = await getSchools();
+    const school = schools.find(s => s.id === currentUser.schoolId);
+    if (!school) return null;
+
+    const recentTransactions: Payment[] = school.students
+        .flatMap(student => student.payments || [])
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 20);
+
+    const dailyCollections = recentTransactions
+        .filter(payment => {
+            const paymentDate = new Date(payment.date);
+            const today = new Date();
+            return paymentDate.toDateString() === today.toDateString();
+        })
+        .reduce((sum, payment) => sum + payment.amount, 0);
+
+    const pendingPayments = school.students.filter(student => student.outstandingFees > 0);
+
+    return {
+        recentTransactions,
+        dailyCollections,
+        pendingPayments,
+        feeStructure: school.feeDefinitions
+    };
+};
+
+export const recordPayment = async (
+    currentUser: CurrentUser, 
+    paymentData: {
+        studentId: string;
+        amount: number;
+        method: 'cash' | 'bank_transfer' | 'card';
+        description: string;
+        reference?: string;
+    }
+): Promise<Payment> => {
+    if (currentUser.role !== 'staff' && currentUser.role !== 'schoolAdmin') {
+        throw new Error('Access denied: Staff or admin role required');
+    }
+
+    const payment: Payment = {
+        id: `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        studentId: paymentData.studentId,
+        amount: paymentData.amount,
+        date: new Date().toISOString(),
+        description: paymentData.description,
+        method: paymentData.method,
+        status: 'confirmed'
+    };
+
+    // Update student's payment record in offline mode
+    const school = offlineSchools.find(s => s.id === currentUser.schoolId);
+    if (school) {
+        const student = school.students.find(s => s.id === paymentData.studentId);
+        if (student) {
+            if (!student.payments) student.payments = [];
+            student.payments.push(payment);
+            student.amountPaid += paymentData.amount;
+            student.outstandingFees = Math.max(0, student.outstandingFees - paymentData.amount);
+        }
+    }
+
+    console.log('Payment recorded:', payment);
+    return payment;
+};
+
+// MESSAGING SERVICES (Cross-role)
+export const getMessageThreads = async (currentUser: CurrentUser): Promise<MessageThread[]> => {
+    // TODO: Implement messaging system
+    return [];
+};
+
+export const sendMessage = async (
+    currentUser: CurrentUser,
+    threadId: string,
+    content: string
+): Promise<Message> => {
+    const message: Message = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        threadId,
+        senderId: currentUser.id,
+        senderName: currentUser.name,
+        senderRole: currentUser.role,
+        content,
+        sentAt: new Date().toISOString(),
+        readBy: [currentUser.id]
+    };
+
+    // TODO: Persist to database/storage
+    console.log('Message sent:', message);
+    return message;
+};
+
+// PAYMENT INTEGRATION SERVICES
+export const createPaymentIntent = async (
+    currentUser: CurrentUser,
+    amount: number,
+    studentId: string,
+    gateway: 'paystack' | 'flutterwave' = 'paystack'
+): Promise<{paymentUrl: string; reference: string}> => {
+    if (currentUser.role !== 'parent') {
+        throw new Error('Access denied: Parent role required');
+    }
+
+    // TODO: Integrate with actual payment gateways using Replit integrations
+    const reference = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const mockPaymentUrl = `https://checkout.${gateway}.com/mockpayment?ref=${reference}&amount=${amount}`;
+
+    console.log(`Mock payment intent created: ${gateway} - ${reference}`);
+    return { paymentUrl: mockPaymentUrl, reference };
+};
+
+export const confirmPayment = async (
+    reference: string,
+    gatewayResponse: any
+): Promise<Payment | null> => {
+    // TODO: Verify payment with gateway webhook/callback
+    console.log('Payment confirmation attempted:', reference, gatewayResponse);
+    
+    // Mock confirmation for now
+    return {
+        id: `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        studentId: 'mock_student_id',
+        amount: 50000,
+        date: new Date().toISOString(),
+        description: 'Online payment',
+        method: 'online',
+        gateway: 'paystack',
+        gatewayReference: reference,
+        status: 'confirmed'
     };
 };

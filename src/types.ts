@@ -372,10 +372,115 @@ export interface Payment {
   date: string;
   description: string;
   method: 'cash' | 'bank_transfer' | 'card' | 'online' | 'cheque';
-  status: 'pending' | 'completed' | 'failed' | 'Pending Verification';
-  reference?: string;
-  proofOfPaymentUrl?: string;
-  feeAllocations?: PaymentAllocation[];
+  gateway?: 'paystack' | 'flutterwave';
+  gatewayReference?: string;
+  status: 'pending' | 'confirmed' | 'failed';
+}
+
+// New types for dashboard functionality
+export interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  date: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+  class: string;
+  period?: string;
+  notes?: string;
+  recordedBy: string;
+  recordedAt: string;
+}
+
+export interface GradeRecord {
+  id: string;
+  studentId: string;
+  subject: string;
+  assessment: string; // 'test', 'exam', 'assignment', 'project'
+  score: number;
+  maxScore: number;
+  grade?: string;
+  date: string;
+  term: Term;
+  session: string;
+  recordedBy: string;
+  recordedAt: string;
+  class: string;
+}
+
+export interface MessageThread {
+  id: string;
+  participants: string[]; // user IDs
+  subject: string;
+  lastMessage: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  status: 'active' | 'archived';
+  createdAt: string;
+  schoolId: string;
+}
+
+export interface Message {
+  id: string;
+  threadId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: string;
+  content: string;
+  sentAt: string;
+  readBy: string[];
+  attachments?: MessageAttachment[];
+}
+
+export interface MessageAttachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+}
+
+export interface Receipt {
+  id: string;
+  studentId: string;
+  studentName: string;
+  amount: number;
+  paymentMethod: string;
+  paymentReference: string;
+  feesPaid: Array<{
+    feeType: string;
+    amount: number;
+  }>;
+  issueDate: string;
+  issuedBy: string;
+  schoolName: string;
+  session: string;
+  term: Term;
+  receiptNumber: string;
+}
+
+// Parent Portal specific types
+export interface ParentPortalData {
+  children: Student[];
+  totalOutstandingFees: number;
+  recentPayments: Payment[];
+  messageThreads: MessageThread[];
+  receipts: Receipt[];
+}
+
+// Teacher Portal specific types
+export interface TeacherClassData {
+  class: string;
+  students: Student[];
+  attendanceRecords: AttendanceRecord[];
+  gradeRecords: GradeRecord[];
+  recentMessages: MessageThread[];
+}
+
+// Staff Portal specific types
+export interface StaffPortalData {
+  recentTransactions: Payment[];
+  dailyCollections: number;
+  pendingPayments: Student[];
+  feeStructure: FeeDefinition[];
 }
 
 // Payment allocation interface
