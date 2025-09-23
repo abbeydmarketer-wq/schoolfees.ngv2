@@ -1,10 +1,12 @@
 import React from 'react';
+import { School } from '../../types';
 
 interface PayrollPageProps {
-  school: any;
+  school: School;
+  refreshData: () => Promise<void>;
 }
 
-const PayrollPage: React.FC<PayrollPageProps> = ({ school }) => {
+const PayrollPage: React.FC<PayrollPageProps> = ({ school, refreshData }) => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Payroll Management</h2>

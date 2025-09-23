@@ -1,10 +1,12 @@
 import React from 'react';
+import { School } from '../types';
 
 interface PaymentCollectionPageProps {
-  school: any;
+  school: School;
+  refreshData: () => Promise<void>;
 }
 
-const PaymentCollectionPage: React.FC<PaymentCollectionPageProps> = ({ school }) => {
+const PaymentCollectionPage: React.FC<PaymentCollectionPageProps> = ({ school, refreshData }) => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Payment Collection</h2>

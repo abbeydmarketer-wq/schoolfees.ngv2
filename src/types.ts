@@ -101,6 +101,9 @@ export interface CurrentUser {
   role: 'parent' | 'teacher' | 'staff' | 'schoolAdmin' | 'superAdmin';
   schoolId?: string;
   avatar?: string;
+  childrenIds?: string[];
+  assignedClasses?: string[];
+  userRole?: UserRole;
 }
 
 export interface PlatformConfig {
@@ -368,10 +371,19 @@ export interface Expenditure extends Transaction {
   approvedBy?: string;
 }
 
+// Salary information interface
+export interface SalaryInfo {
+  baseSalary: number;
+  allowances: Allowance[];
+  deductions: Deduction[];
+  payslips: Payslip[];
+}
+
 // Team member interface (alias for Staff with additional properties)
 export interface TeamMember extends Staff {
   department?: string;
   permissions?: string[];
+  salaryInfo?: SalaryInfo;
 }
 
 // Payroll related interfaces

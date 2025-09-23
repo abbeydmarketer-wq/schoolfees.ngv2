@@ -1,4 +1,4 @@
-import { PlatformConfig, School, RiskLevel, Term, ApplicationStatus, UserRole } from '../types.ts';
+import { PlatformConfig, School, RiskLevel, Term, ApplicationStatus, UserRole } from '../types';
 
 export const mockSchools: School[] = [
     {
@@ -71,6 +71,18 @@ export const mockSchools: School[] = [
                 smsEnabled: true,
                 whatsappEnabled: true,
                 reminderDays: [3, 7, 14]
+            }
+        },
+        smsSettings: {
+            manualTemplates: []
+        },
+        communicationSettings: {
+            manualTemplates: [],
+            transactionalNotifications: {
+                paymentConfirmation: {
+                    emailSubject: 'Payment Confirmation',
+                    emailTemplate: 'Thank you for your payment of ₦{amount} for {student}. Your receipt number is {reference}.'
+                }
             }
         },
         currentSession: '2023/2024',
