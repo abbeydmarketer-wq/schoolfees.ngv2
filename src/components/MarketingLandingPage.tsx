@@ -33,6 +33,11 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       ),
+      Reconciliation: (
+        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      ),
     };
     return icons[iconName as keyof typeof icons] || icons.Analytics;
   };
@@ -60,6 +65,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
                 <li><button onClick={() => scrollToSection('features')}>Features</button></li>
                 <li><button onClick={() => scrollToSection('testimonials')}>Testimonials</button></li>
                 <li><button onClick={() => scrollToSection('pricing')}>Pricing</button></li>
+                <li><button onClick={() => scrollToSection('faq')}>FAQ</button></li>
                 <li><button onClick={() => scrollToSection('contact')}>Contact</button></li>
               </ul>
             </div>
@@ -70,12 +76,13 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
               <li><button onClick={() => scrollToSection('features')} className="hover:text-primary">Features</button></li>
               <li><button onClick={() => scrollToSection('testimonials')} className="hover:text-primary">Testimonials</button></li>
               <li><button onClick={() => scrollToSection('pricing')} className="hover:text-primary">Pricing</button></li>
+              <li><button onClick={() => scrollToSection('faq')} className="hover:text-primary">FAQ</button></li>
               <li><button onClick={() => scrollToSection('contact')} className="hover:text-primary">Contact</button></li>
             </ul>
           </div>
           <div className="navbar-end">
             <button onClick={onSignInClick} className="btn btn-ghost mr-2">Sign In</button>
-            <button onClick={onGetStartedClick} className="btn btn-primary">Get Started</button>
+            <button onClick={onGetStartedClick} className="btn btn-primary">Register Now</button>
           </div>
         </div>
       </div>
@@ -96,13 +103,13 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button onClick={onGetStartedClick} className="btn btn-primary btn-lg">
-                Get Started Free
+                Register Now
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </button>
               <button onClick={() => scrollToSection('contact')} className="btn btn-outline btn-lg">
-                Book a Demo
+                View Demo
               </button>
             </div>
 
@@ -173,7 +180,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
             <p className="text-lg text-base-content/70">Everything you need to manage school fees efficiently</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {websiteContent.features.map((feature) => (
               <div key={feature.id} className="card bg-base-100 shadow-lg border border-base-300 hover:shadow-xl transition-shadow">
                 <div className="card-body">
@@ -197,7 +204,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
             <p className="text-lg text-base-content/70">Trusted by school administrators across Nigeria</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {websiteContent.testimonials.items.map((testimonial) => (
               <div key={testimonial.id} className="card bg-base-100 shadow-lg">
                 <div className="card-body">
@@ -257,7 +264,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
                 <div className="card-body text-center">
                   <h3 className="card-title justify-center text-2xl mb-2">{plan.name}</h3>
                   <div className="text-4xl font-bold text-primary mb-2">
-                    ₦{selectedPlan === 'yearly' ? plan.prices.yearly : plan.prices.monthly}
+                    ₦{(selectedPlan === 'yearly' ? plan.prices.yearly : plan.prices.monthly).toLocaleString('en-NG')}
                     <span className="text-lg text-base-content/60 font-normal">
                       /{selectedPlan === 'yearly' ? 'year' : 'month'}
                     </span>
@@ -281,7 +288,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
                     onClick={onGetStartedClick} 
                     className={`btn btn-block ${index === 1 ? 'btn-primary' : 'btn-outline btn-primary'}`}
                   >
-                    {plan.name === 'Starter' ? 'Start Free Trial' : 'Get Started'}
+                    {plan.name === 'Starter' ? 'Register Now' : 'Register Now'}
                   </button>
                 </div>
               </div>
@@ -289,7 +296,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
           </div>
           
           <div className="text-center mt-8">
-            <p className="text-base-content/70">All plans include 24/7 support • No setup fees • Cancel anytime</p>
+            <p className="text-base-content/70">All plans include 24/7 support • No setup fees • 30-day money-back guarantee</p>
           </div>
         </div>
       </section>
@@ -301,11 +308,85 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
           <p className="text-xl mb-8 opacity-90">Join hundreds of Nigerian schools already using SchoolFees.NG</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={onGetStartedClick} className="btn btn-secondary btn-lg">
-              Start Free Trial Today
+              Register Your School Now
             </button>
             <button onClick={() => scrollToSection('contact')} className="btn btn-outline btn-secondary btn-lg">
-              Schedule a Demo
+              View Demo
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-16 bg-base-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-lg text-base-content/70">Get answers to common questions about SchoolFees.NG</p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-1" /> 
+                <div className="collapse-title text-lg font-medium">
+                  How quickly can I set up my school?
+                </div>
+                <div className="collapse-content"> 
+                  <p>You can have your school fully set up and collecting payments within 24 hours. Our onboarding team will help you import your students and configure everything.</p>
+                </div>
+              </div>
+
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-2" /> 
+                <div className="collapse-title text-lg font-medium">
+                  Which payment methods do you support?
+                </div>
+                <div className="collapse-content"> 
+                  <p>We support Paystack, Flutterwave, bank transfers, USSD, and card payments. Parents can pay using any method that's convenient for them.</p>
+                </div>
+              </div>
+
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-3" /> 
+                <div className="collapse-title text-lg font-medium">
+                  Do you charge transaction fees?
+                </div>
+                <div className="collapse-content"> 
+                  <p>We don't charge additional transaction fees. You only pay the standard gateway fees from Paystack/Flutterwave, which are among the lowest in Nigeria.</p>
+                </div>
+              </div>
+
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-4" /> 
+                <div className="collapse-title text-lg font-medium">
+                  Can parents track their payment history?
+                </div>
+                <div className="collapse-content"> 
+                  <p>Yes! Parents have access to a dedicated portal where they can view all payment history, download receipts, and see outstanding balances for their children.</p>
+                </div>
+              </div>
+
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-5" /> 
+                <div className="collapse-title text-lg font-medium">
+                  Is my school data secure?
+                </div>
+                <div className="collapse-content"> 
+                  <p>Absolutely. We use bank-grade security with SSL encryption, regular backups, and comply with Nigerian data protection regulations to keep your information safe.</p>
+                </div>
+              </div>
+
+              <div className="collapse collapse-plus bg-base-200">
+                <input type="radio" name="faq-accordion-6" /> 
+                <div className="collapse-title text-lg font-medium">
+                  Can I export my financial reports?
+                </div>
+                <div className="collapse-content"> 
+                  <p>Yes, you can export detailed financial reports in PDF and Excel formats. Generate reports by term, class, payment method, or any custom date range.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -336,6 +417,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
             <div className="space-y-2">
               <button onClick={() => scrollToSection('features')} className="link link-hover">Features</button>
               <button onClick={() => scrollToSection('pricing')} className="link link-hover">Pricing</button>
+              <button onClick={() => scrollToSection('faq')} className="link link-hover">FAQ</button>
               <button onClick={onSignInClick} className="link link-hover">Sign In</button>
             </div>
           </div>

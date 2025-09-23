@@ -106,14 +106,16 @@ export const mockPlatformConfig: PlatformConfig = {
         features: [
             { id: 'feat1', title: 'Automated Reminders', description: 'Never chase a payment again. Our system automatically sends polite SMS and email reminders to parents about outstanding fees.', icon: 'Communication', imageUrl: 'https://placehold.co/1200x800/E0E7FF/4F46E5/png?text=Automated+Reminders' },
             { id: 'feat2', title: 'Multiple Payment Options', description: 'Accept payments from parents via card, bank transfer, USSD, Paystack, and Flutterwave, providing maximum convenience.', icon: 'Payments', imageUrl: 'https://placehold.co/1200x800/D1FAE5/059669/png?text=Online+Payments' },
-            { id: 'feat3', title: 'AI-Powered Insights', description: 'Get a clear view of your school\'s financial health. Our AI predicts debt risks and provides actionable recommendations to improve your revenue.', icon: 'Analytics', imageUrl: 'https://placehold.co/1200x800/FEF3C7/D97706/png?text=AI+Insights' }
+            { id: 'feat3', title: 'AI-Powered Insights', description: 'Get a clear view of your school\'s financial health. Our AI predicts debt risks and provides actionable recommendations to improve your revenue.', icon: 'Analytics', imageUrl: 'https://placehold.co/1200x800/FEF3C7/D97706/png?text=AI+Insights' },
+            { id: 'feat4', title: 'Real-time Reconciliation', description: 'Instantly reconcile payments across all channels with automatic matching. Generate financial reports and track your school\'s revenue in real-time.', icon: 'Reconciliation', imageUrl: 'https://placehold.co/1200x800/F3E8FF/7C3AED/png?text=Real-time+Reports' }
         ],
         testimonials: {
             title: 'What School Administrators Are Saying',
             items: [
                 { id: 'test1', quote: 'SchoolFees.NG has reduced our administrative workload by at least 50%. Reconciliation is now a breeze!', name: 'Mrs. Chika Okonkwo', title: 'Proprietress, Bright Stars Academy' },
                 { id: 'test2', quote: 'The parent portal is fantastic. Our parents love the transparency and ease of payment.', name: 'Mr. David Audu', title: 'Bursar, Kings College Lagos' },
-                { id: 'test3', quote: 'The AI insights feature is a game-changer. It helped us identify potential defaulters early and engage them proactively.', name: 'Dr. Amina Yusuf', title: 'Head of School, The Learning Tree' }
+                { id: 'test3', quote: 'The AI insights feature is a game-changer. It helped us identify potential defaulters early and engage them proactively.', name: 'Dr. Amina Yusuf', title: 'Head of School, The Learning Tree' },
+                { id: 'test4', quote: 'We have improved our fee collection rate from 60% to 95% within just 3 months. The automated reminders work perfectly!', name: 'Mr. Kola Adebayo', title: 'Administrator, Excellence Model School' }
             ]
         },
         theme: {
@@ -122,23 +124,23 @@ export const mockPlatformConfig: PlatformConfig = {
             accent: '#8b5cf6'
         },
         contactInfo: {
-            email: 'support@schoolfees.ng',
-            phone: '+2348012345678',
+            email: 'hello@schoolfees.ng',
+            phone: '09077780156',
             address: 'Lagos, Nigeria'
         }
     },
     pricingPlans: [
-        { id: 'plan_starter', name: 'Starter', prices: { monthly: 15000, yearly: 100000 }, limits: { students: 100, staff: 5, storage: '10GB' }, features: ['Up to 100 Students', 'Online Payment Collection', 'Automated Receipts', 'Basic Reporting'] },
-        { id: 'plan_advanced', name: 'Advanced', prices: { monthly: 35000, yearly: 250000 }, limits: { students: 500, staff: 20, storage: '50GB' }, features: ['Up to 500 Students', 'All Starter Features', 'Automated Reminders', 'Communication Center'] },
-        { id: 'plan_enterprise', name: 'Enterprise', prices: { monthly: 75000, yearly: 550000 }, limits: { students: 2000, staff: 50, storage: 'Unlimited' }, features: ['Unlimited Students', 'All Advanced Features', 'AI Debt Insights', 'Payroll Management', 'Dedicated Support'] }
+        { id: 'plan_starter', name: 'Starter', prices: { monthly: 2500, yearly: 25000 }, limits: { students: 100, staff: 5, storage: '10GB' }, features: ['Up to 100 Students', 'Online Payment Collection', 'Automated Receipts', 'Basic Reporting', 'Email Support'] },
+        { id: 'plan_advanced', name: 'Professional', prices: { monthly: 3500, yearly: 35000 }, limits: { students: 500, staff: 20, storage: '50GB' }, features: ['Up to 500 Students', 'All Starter Features', 'Automated Reminders', 'Communication Center', 'SMS Notifications', 'WhatsApp Integration'] },
+        { id: 'plan_enterprise', name: 'Enterprise', prices: { monthly: 5000, yearly: 50000 }, limits: { students: 2000, staff: 50, storage: 'Unlimited' }, features: ['Unlimited Students', 'All Professional Features', 'AI Debt Insights', 'Payroll Management', 'Dedicated Support', 'Custom Integrations'] }
     ],
     knowledgeBaseArticles: [
         { id: 'kb1', title: 'How to Add a New Student', content: '## Adding Students\nTo add a new student, navigate to the **Students** page and click the "Add New Student" button.', category: 'Students', status: 'published', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [] },
         { id: 'kb2', title: 'Setting Up Your Fee Structure', content: 'This is an article about setting up fees.', category: 'Settings', status: 'published', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [] }
     ],
     supportConfig: {
-        email: 'support@schoolfees.ng',
-        phone: '+2348012345678',
+        email: 'hello@schoolfees.ng',
+        phone: '09077780156',
         chatEnabled: true,
         ticketingEnabled: true,
         knowledgeBaseEnabled: true
