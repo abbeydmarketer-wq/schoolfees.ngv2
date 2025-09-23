@@ -44,7 +44,12 @@ const App: React.FC = () => {
     const [impersonatedSchool, setImpersonatedSchool] = useState<School | null>(null);
 
     // Apply dynamic theme from platformConfig
-    useThemeManager(platformConfig?.websiteContent.theme);
+    const themeColors = platformConfig?.websiteContent.theme === 'blue' ? {
+        primary: '#3B82F6',
+        secondary: '#1E40AF', 
+        accent: '#06B6D4'
+    } : undefined;
+    useThemeManager(themeColors);
 
     // Check for school-specific subdomain on initial load
     useEffect(() => {
@@ -147,7 +152,7 @@ const App: React.FC = () => {
                 case 'Payroll':
                 case 'Reconciliation':
                 case 'Fee Structure':
-                    return <BursaryPage school={activeSchool} refreshData={refreshData} activeSubView={activeView} setActiveView={setActiveView} />;
+                    return <BursaryPage school={activeSchool} refreshData={refreshData} activeSubView={activeView} setActiveSubView={(view) => setActiveView(view)} />;
                 default: return <Dashboard school={activeSchool} platformConfig={platformConfig} />;
             }
         };
@@ -166,7 +171,7 @@ const App: React.FC = () => {
                     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
                     <DesktopSidebar activeView={activeView} setActiveView={setActiveView} onLogout={handleLogout} />
                 </div>
-                <AiChatbot school={activeSchool} platformConfig={platformConfig} onGuideRequest={setActiveView} activeView={activeView} />
+                <AiChatbot school={activeSchool} platformConfig={platformConfig} onGuideRequest={(view) => setActiveView(view as View)} activeView={activeView} />
             </div>
         );
     }

@@ -16,6 +16,8 @@ export interface School {
   applicants: Applicant[];
   feeDefinitions: FeeDefinition[];
   settings: SchoolSettings;
+  otherIncome: Income[];
+  expenditures: Expenditure[];
 }
 
 export interface Student {
@@ -32,6 +34,8 @@ export interface Student {
   outstandingFees: number;
   debtRisk: RiskLevel;
   status: 'active' | 'inactive' | 'graduated';
+  payments: Payment[];
+  amountPaid?: number;
 }
 
 export interface Staff {
@@ -285,5 +289,106 @@ export type View =
   | 'Reconciliation'
   | 'Fee Structure'
   | 'More';
+
+// Bursary sub-view types
+export type BursarySubView = 
+  | 'Student Payments'
+  | 'Invoices & Receipts'
+  | 'Other Income'
+  | 'Expenditures'
+  | 'Payroll'
+  | 'Reconciliation'
+  | 'Fee Structure';
+
+// Payment interface for student payments
+export interface Payment {
+  id: string;
+  studentId: string;
+  amount: number;
+  date: string;
+  description: string;
+  method: 'cash' | 'bank_transfer' | 'card' | 'online' | 'cheque';
+  status: 'pending' | 'completed' | 'failed' | 'Pending Verification';
+  reference?: string;
+  proofOfPaymentUrl?: string;
+  feeAllocations?: PaymentAllocation[];
+}
+
+// Payment allocation interface
+export interface PaymentAllocation {
+  feeId: string;
+  amount: number;
+  feeType: string;
+}
+
+// Income interface for other school income
+export interface Income extends Transaction {
+  type: 'income';
+  source: string;
+}
+
+// Expenditure interface for school expenses
+export interface Expenditure extends Transaction {
+  type: 'expense';
+  vendor?: string;
+  approvedBy?: string;
+}
+
+// Team member interface (alias for Staff with additional properties)
+export interface TeamMember extends Staff {
+  department?: string;
+  permissions?: string[];
+}
+
+// Payroll related interfaces
+export interface PayrollSettings {
+  payrollCycle: 'monthly' | 'bi-weekly' | 'weekly';
+  defaultDeductions: Deduction[];
+  bankDetails: {
+    accountName: string;
+    accountNumber: string;
+    bankName: string;
+  };
+}
+
+export interface Payslip {
+  id: string;
+  staffId: string;
+  period: string;
+  basicSalary: number;
+  allowances: Allowance[];
+  deductions: Deduction[];
+  grossPay: number;
+  netPay: number;
+  status: 'draft' | 'sent' | 'paid';
+  generatedAt: string;
+}
+
+export interface Allowance {
+  id: string;
+  name: string;
+  amount: number;
+  type: 'fixed' | 'percentage';
+}
+
+export interface Deduction {
+  id: string;
+  name: string;
+  amount: number;
+  type: 'fixed' | 'percentage';
+  mandatory: boolean;
+}
+
+export interface Discount {
+  id: string;
+  name: string;
+  type: 'fixed' | 'percentage';
+  value: number;
+  applicableClasses: string[];
+  validFrom: string;
+  validTo: string;
+  maxUsage?: number;
+  currentUsage: number;
+}
 
 // Export statement removed - using individual exports instead

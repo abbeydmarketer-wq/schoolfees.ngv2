@@ -1,44 +1,79 @@
-import React, { useState } from 'react';
-import ModalHeader from './ModalHeader.tsx';
+import React, { useState, useEffect } from 'react';
+import { Transaction } from '../types.ts';
 
 interface TransactionModalProps {
-  isOpen: boolean;
+  schoolId: string;
+  config: {
+    type: 'income' | 'expenditure';
+    data?: Transaction;
+  };
   onClose: () => void;
-  onSubmit: (transaction: any) => void;
-  type: 'income' | 'expense';
+  onSave: (transaction: Transaction) => void;
 }
 
 const TransactionModal: React.FC<TransactionModalProps> = ({
-  isOpen,
+  schoolId,
+  config,
   onClose,
-  onSubmit,
-  type
+  onSave
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<Transaction>>({
+    amount: 0,
     description: '',
-    amount: '',
+    category: '',
     date: new Date().toISOString().split('T')[0],
-    category: ''
+    reference: '',
+    status: 'completed',
+    type: config.type === 'income' ? 'income' : 'expense'
   });
+
+  useEffect(() => {
+    if (config.data) {
+      setFormData(config.data);
+    }
+  }, [config.data]);
+
+  const categories = {
+    income: [
+      'Tuition Fees',
+      'Registration Fees',
+      'Donations',
+      'Grants',
+      'Other Income'
+    ],
+    expenditure: [
+      'Salaries',
+      'Utilities',
+      'Supplies',
+      'Maintenance',
+      'Equipment',
+      'Other Expenses'
+    ]
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ ...formData, type, amount: parseFloat(formData.amount) });
-    onClose();
-    setFormData({ description: '', amount: '', date: new Date().toISOString().split('T')[0], category: '' });
-  };
+    
+    const transaction: Transaction = {
+      id: config.data?.id || `txn_${Date.now()}`,
+      amount: Number(formData.amount) || 0,
+      description: formData.description || '',
+      category: formData.category || '',
+      date: formData.date || new Date().toISOString().split('T')[0],
+      reference: formData.reference,
+      status: formData.status || 'completed',
+      type: config.type === 'income' ? 'income' : 'expense'
+    };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    onSave(transaction);
   };
-
-  if (!isOpen) return null;
 
   return (
-    <div className="modal modal-open">
-      <div className="modal-box">
-        <ModalHeader title={`Add ${type === 'income' ? 'Income' : 'Expense'}`} onClose={onClose} />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h3 className="text-lg font-semibold mb-4">
+          {config.data ? 'Edit' : 'Add'} {config.type === 'income' ? 'Income' : 'Expenditure'}
+        </h3>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
@@ -47,63 +82,98 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
             </label>
             <input
               type="text"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
               className="input input-bordered"
+              value={formData.description || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               required
             />
           </div>
-          
+
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Amount</span>
+              <span className="label-text">Amount (₦)</span>
             </label>
             <input
               type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleInputChange}
               className="input input-bordered"
+              value={formData.amount || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
+              min="0"
               step="0.01"
               required
             />
           </div>
-          
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Category</span>
+            </label>
+            <select
+              className="select select-bordered"
+              value={formData.category || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+              required
+            >
+              <option value="">Select category</option>
+              {categories[config.type].map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="form-control">
             <label className="label">
               <span className="label-text">Date</span>
             </label>
             <input
               type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
               className="input input-bordered"
+              value={formData.date || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
               required
             />
           </div>
-          
+
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Category</span>
+              <span className="label-text">Reference (Optional)</span>
             </label>
             <input
               type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
               className="input input-bordered"
-              placeholder="e.g., Tuition, Supplies, etc."
+              value={formData.reference || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, reference: e.target.value }))}
             />
           </div>
-          
-          <div className="modal-action">
-            <button type="button" className="btn btn-ghost" onClick={onClose}>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Status</span>
+            </label>
+            <select
+              className="select select-bordered"
+              value={formData.status || 'completed'}
+              onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Transaction['status'] }))}
+            >
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <button 
+              type="button"
+              onClick={onClose}
+              className="btn btn-outline"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary">
-              Add {type === 'income' ? 'Income' : 'Expense'}
+            <button 
+              type="submit"
+              className="btn btn-primary"
+            >
+              {config.data ? 'Update' : 'Add'} {config.type === 'income' ? 'Income' : 'Expenditure'}
             </button>
           </div>
         </form>

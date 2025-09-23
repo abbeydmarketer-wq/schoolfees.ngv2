@@ -42,6 +42,8 @@ const createStudentFromApplicant = (applicant: ApplicantData, school: School): O
         debtRisk: totalFees > 0 ? RiskLevel.Medium : RiskLevel.Low,
         fees: applicableFees,
         status: 'active' as const,
+        payments: [],
+        amountPaid: 0
     };
 };
 

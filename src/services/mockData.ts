@@ -17,7 +17,9 @@ export const mockSchools: School[] = [
                 fees: [
                     { id: 'fee1_1', type: 'Tuition', amount: 120000, paidAmount: 120000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
                     { id: 'fee1_2', type: 'Books', amount: 30000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' }
-                ]
+                ],
+                payments: [],
+                amountPaid: 150000
             },
             {
                 id: 'stu_sunnydale_123_2', name: 'Aisha Bello', admissionNumber: 'SHS002', class: 'JSS1', dateOfBirth: '2012-07-22',
@@ -26,7 +28,9 @@ export const mockSchools: School[] = [
                 fees: [
                     { id: 'fee2_1', type: 'Tuition', amount: 120000, paidAmount: 80000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' },
                     { id: 'fee2_2', type: 'Uniform', amount: 45000, paidAmount: 0, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
-                ]
+                ],
+                payments: [],
+                amountPaid: 80000
             },
             {
                 id: 'stu_sunnydale_123_3', name: 'David Adeboye', admissionNumber: 'SHS003', class: 'SSS2', dateOfBirth: '2009-01-10',
@@ -35,7 +39,9 @@ export const mockSchools: School[] = [
                 fees: [
                     { id: 'fee3_1', type: 'Tuition', amount: 150000, paidAmount: 150000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
                     { id: 'fee3_2', type: 'Lab Fees', amount: 50000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
-                ]
+                ],
+                payments: [],
+                amountPaid: 180000
             }
         ],
         staff: [
@@ -69,6 +75,8 @@ export const mockSchools: School[] = [
         },
         currentSession: '2023/2024',
         currentTerm: 'third',
+        otherIncome: [],
+        expenditures: []
     }
 ];
 
