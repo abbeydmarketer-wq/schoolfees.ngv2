@@ -49,8 +49,8 @@ export const mockSchools: School[] = [
             { id: 'tm_sunnydale_s1', name: 'Funke Akindele', email: 'staff@sunnydale.com', role: 'Bursar', salaryInfo: { baseSalary: 150000, allowances: [{id: 'alw2', type: 'allowance', name: 'Housing', amount: 30000}], deductions: [], payslips: [] } }
         ],
         applicants: [
-            { id: 'app1', name: 'New Applicant 1', applyingForClass: 'JSS1', dateOfBirth: '2013-02-11', parentName: 'Mr. New', parentEmail: 'new@example.com', parentPhone: '08012341234', applicationDate: new Date().toISOString(), status: ApplicationStatus.Applied },
-            { id: 'app2', name: 'New Applicant 2', applyingForClass: 'JSS1', dateOfBirth: '2013-03-12', parentName: 'Mrs. Test', parentEmail: 'test@example.com', parentPhone: '08043214321', applicationDate: new Date().toISOString(), status: ApplicationStatus.AwaitingTest },
+            { id: 'app1', name: 'New Applicant 1', applyingForClass: 'JSS1', dateOfBirth: '2013-02-11', parentName: 'Mr. New', parentEmail: 'new@example.com', parentPhone: '08012341234', applicationDate: new Date().toISOString(), status: ApplicationStatus.Applied, address: 'Lagos, Nigeria', email: 'new@example.com', phone: '08012341234' },
+            { id: 'app2', name: 'New Applicant 2', applyingForClass: 'JSS1', dateOfBirth: '2013-03-12', parentName: 'Mrs. Test', parentEmail: 'test@example.com', parentPhone: '08043214321', applicationDate: new Date().toISOString(), status: ApplicationStatus.AwaitingTest, address: 'Abuja, Nigeria', email: 'test@example.com', phone: '08043214321' },
         ],
         feeDefinitions: [
             { id: 'fd1', name: 'Tuition', amounts: [{class: 'JSS1', amount: 120000, type: 'mandatory'}, {class: 'SSS2', amount: 150000, type: 'mandatory'}] },

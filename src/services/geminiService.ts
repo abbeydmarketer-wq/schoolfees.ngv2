@@ -4,8 +4,8 @@ let GoogleGenerativeAI: any = null;
 // Try to import Google Generative AI, fall back gracefully if not available
 const initializeGoogleAI = async () => {
   try {
-    const genAI = await import('@google/genai');
-    GoogleGenerativeAI = genAI.GoogleGenerativeAI;
+    const genAIModule: any = await import('@google/genai');
+    GoogleGenerativeAI = genAIModule.default || genAIModule.GoogleGenerativeAI || genAIModule;
     return true;
   } catch (error) {
     console.log('Google Generative AI not available, using mock responses');

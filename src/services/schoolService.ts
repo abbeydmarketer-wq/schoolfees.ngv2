@@ -24,6 +24,12 @@ export const updateApplicant = async (id: string, applicantData: Partial<Applica
   return { id, ...applicantData };
 };
 
+export const updateApplicantStatus = async (id: string, status: any) => {
+  // Mock implementation for updating applicant status
+  console.log('Updating applicant status:', id, status);
+  return { id, status };
+};
+
 export const addStudent = async (studentData: any) => {
   // Mock implementation
   console.log('Adding student:', studentData);

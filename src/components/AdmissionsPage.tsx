@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { School, Applicant, ApplicationStatus, Student, RiskLevel } from '../types.ts';
-import { addApplicant as addApplicantService, updateApplicant as updateApplicantService, addStudent as addStudentService } from '../services/schoolService.ts';
+import { addApplicant as addApplicantService, updateApplicant as updateApplicantService, updateApplicantStatus as updateApplicantStatusService, addStudent as addStudentService } from '../services/schoolService.ts';
 import ApplicantFormModal, { ApplicantData } from './ApplicantFormModal.tsx';
 import AdmissionsBoard from './AdmissionsBoard.tsx';
 
@@ -24,6 +24,7 @@ const createStudentFromApplicant = (applicant: ApplicantData, school: School): O
             dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
             session: school.currentSession,
             term: school.currentTerm,
+            status: 'pending' as const,
         }));
 
     const totalFees = applicableFees.reduce((sum, fee) => sum + fee.amount, 0);
@@ -36,16 +37,11 @@ const createStudentFromApplicant = (applicant: ApplicantData, school: School): O
         parentName: applicant.parentName,
         parentEmail: applicant.parentEmail,
         parentPhone: applicant.parentPhone,
-        parentRelationship: 'Guardian',
-        preferredPaymentMethod: 'Manual Bank Transfer',
-        totalFees,
-        amountPaid: 0,
+        address: applicant.address,
         outstandingFees: totalFees,
-        lastPaymentDate: null,
         debtRisk: totalFees > 0 ? RiskLevel.Medium : RiskLevel.Low,
         fees: applicableFees,
-        payments: [],
-        discounts: [],
+        status: 'active' as const,
     };
 };
 
@@ -69,7 +65,7 @@ const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ school, refreshData, on
                     applicationDate: new Date().toISOString(),
                     status: ApplicationStatus.Applied,
                 };
-                await addApplicantService(school.id, newApplicant);
+                await addApplicantService(newApplicant);
             }
             await refreshData();
         } catch (error) {
@@ -88,10 +84,10 @@ const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ school, refreshData, on
         try {
             // 1. Create the new student object
             const newStudentData = createStudentFromApplicant(applicant, school);
-            const newStudent = await addStudentService(school.id, newStudentData);
+            const newStudent = await addStudentService(newStudentData);
             
             // 2. Mark the applicant as enrolled
-            await updateApplicantService(applicant.id, { status: ApplicationStatus.Enrolled });
+            await updateApplicantStatusService(applicant.id, ApplicationStatus.Enrolled);
 
             // 3. Refresh all data
             await refreshData();
@@ -106,7 +102,7 @@ const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ school, refreshData, on
 
     const handleUpdateStatus = async (applicantId: string, status: ApplicationStatus) => {
         try {
-            await updateApplicantService(applicantId, { status });
+            await updateApplicantStatusService(applicantId, status);
             await refreshData();
         } catch (error) {
              console.error("Failed to update applicant status:", error);
@@ -157,7 +153,7 @@ const AdmissionsPage: React.FC<AdmissionsPageProps> = ({ school, refreshData, on
                     onUpdateStatus={handleUpdateStatus}
                 />
              </div>
-            {isModalOpen && <ApplicantFormModal applicant={editingApplicant} onClose={() => setIsModalOpen(false)} onSave={handleSaveApplicant} />}
+            {isModalOpen && <ApplicantFormModal isOpen={isModalOpen} applicant={editingApplicant} onClose={() => setIsModalOpen(false)} onSubmit={handleSaveApplicant} />}
         </div>
     );
 };

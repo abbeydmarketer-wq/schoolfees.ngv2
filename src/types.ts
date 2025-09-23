@@ -13,6 +13,7 @@ export interface School {
   planId: string;
   students: Student[];
   staff: Staff[];
+  applicants: Applicant[];
   feeDefinitions: FeeDefinition[];
   settings: SchoolSettings;
 }
@@ -232,9 +233,13 @@ export enum RiskLevel {
 
 export enum ApplicationStatus {
   Pending = 'pending',
+  Applied = 'applied',
+  AwaitingTest = 'awaiting_test',
   Reviewed = 'reviewed',
   Accepted = 'accepted',
+  OfferedAdmission = 'offered_admission',
   Rejected = 'rejected',
+  AdmissionDeclined = 'admission_declined',
   Enrolled = 'enrolled'
 }
 
@@ -250,6 +255,7 @@ export type View =
   | 'Dashboard'
   | 'Students'
   | 'Team'
+  | 'Staff'
   | 'Reports'
   | 'Communication'
   | 'Printing'
@@ -264,17 +270,7 @@ export type View =
   | 'Expenditures'
   | 'Payroll'
   | 'Reconciliation'
-  | 'Fee Structure';
+  | 'Fee Structure'
+  | 'More';
 
-export default {
-  School,
-  Student,
-  Staff,
-  Fee,
-  Applicant,
-  CurrentUser,
-  PlatformConfig,
-  RiskLevel,
-  ApplicationStatus,
-  PaymentStatus
-};
+// Export statement removed - using individual exports instead
