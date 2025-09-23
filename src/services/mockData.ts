@@ -11,36 +11,30 @@ export const mockSchools: School[] = [
         students: [
             {
                 id: 'stu_sunnydale_123_1', name: 'Tunde Okoro', admissionNumber: 'SHS001', class: 'JSS1', dateOfBirth: '2012-05-15',
-                parentName: 'Mr. Okoro', parentEmail: 'parent@sunnydale.com', parentPhone: '08098765432', parentRelationship: 'Father',
-                preferredPaymentMethod: 'Bank Transfer', totalFees: 150000, amountPaid: 150000, outstandingFees: 0, lastPaymentDate: '2024-05-20', debtRisk: RiskLevel.Low,
+                parentName: 'Mr. Okoro', parentEmail: 'parent@sunnydale.com', parentPhone: '08098765432', address: 'Lagos, Nigeria',
+                outstandingFees: 0, debtRisk: RiskLevel.Low, status: 'active',
                 fees: [
                     { id: 'fee1_1', type: 'Tuition', amount: 120000, paidAmount: 120000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
                     { id: 'fee1_2', type: 'Books', amount: 30000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' }
-                ],
-                payments: [{ id: 'pay1', studentId: 'stu_sunnydale_123_1', amount: 150000, date: '2024-05-20', method: 'Paystack', status: 'Completed', description: 'Third Term Fees', allocations: [{feeId: 'fee1_1', amount: 120000}, {feeId: 'fee1_2', amount: 30000}]}],
-                discounts: []
+                ]
             },
             {
                 id: 'stu_sunnydale_123_2', name: 'Aisha Bello', admissionNumber: 'SHS002', class: 'JSS1', dateOfBirth: '2012-07-22',
-                parentName: 'Mrs. Bello', parentEmail: 'bello.a@example.com', parentPhone: '08011223344', parentRelationship: 'Mother',
-                preferredPaymentMethod: 'Card', totalFees: 165000, amountPaid: 80000, outstandingFees: 85000, lastPaymentDate: '2024-06-01', debtRisk: RiskLevel.High,
+                parentName: 'Mrs. Bello', parentEmail: 'bello.a@example.com', parentPhone: '08011223344', address: 'Lagos, Nigeria',
+                outstandingFees: 85000, debtRisk: RiskLevel.High, status: 'active',
                 fees: [
                     { id: 'fee2_1', type: 'Tuition', amount: 120000, paidAmount: 80000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' },
                     { id: 'fee2_2', type: 'Uniform', amount: 45000, paidAmount: 0, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
-                ],
-                payments: [{ id: 'pay2', studentId: 'stu_sunnydale_123_2', amount: 80000, date: '2024-06-01', method: 'Manual Bank Transfer', status: 'Completed', description: 'Part payment', allocations: [{feeId: 'fee2_1', amount: 80000}]}],
-                discounts: []
+                ]
             },
             {
                 id: 'stu_sunnydale_123_3', name: 'David Adeboye', admissionNumber: 'SHS003', class: 'SSS2', dateOfBirth: '2009-01-10',
-                parentName: 'Mr. Adeboye', parentEmail: 'adeboye.d@example.com', parentPhone: '08055667788', parentRelationship: 'Father',
-                preferredPaymentMethod: 'Manual Bank Transfer', totalFees: 200000, amountPaid: 180000, outstandingFees: 20000, lastPaymentDate: '2024-05-18', debtRisk: RiskLevel.Medium,
+                parentName: 'Mr. Adeboye', parentEmail: 'adeboye.d@example.com', parentPhone: '08055667788', address: 'Lagos, Nigeria',
+                outstandingFees: 20000, debtRisk: RiskLevel.Medium, status: 'active',
                 fees: [
                     { id: 'fee3_1', type: 'Tuition', amount: 150000, paidAmount: 150000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
                     { id: 'fee3_2', type: 'Lab Fees', amount: 50000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
-                ],
-                payments: [{ id: 'pay3', studentId: 'stu_sunnydale_123_3', amount: 180000, date: '2024-05-18', method: 'Manual Bank Transfer', status: 'Pending Verification', description: 'Full payment', allocations: [{feeId: 'fee3_1', amount: 150000}, {feeId: 'fee3_2', amount: 30000}], proofOfPaymentUrl: 'https://placehold.co/600x400.png'}],
-                discounts: []
+                ]
             }
         ],
         teamMembers: [
@@ -53,10 +47,10 @@ export const mockSchools: School[] = [
             { id: 'app2', name: 'New Applicant 2', applyingForClass: 'JSS1', dateOfBirth: '2013-03-12', parentName: 'Mrs. Test', parentEmail: 'test@example.com', parentPhone: '08043214321', applicationDate: new Date().toISOString(), status: ApplicationStatus.AwaitingTest, address: 'Abuja, Nigeria', email: 'test@example.com', phone: '08043214321' },
         ],
         feeDefinitions: [
-            { id: 'fd1', name: 'Tuition', amounts: [{class: 'JSS1', amount: 120000, type: 'mandatory'}, {class: 'SSS2', amount: 150000, type: 'mandatory'}] },
-            { id: 'fd2', name: 'Books', amounts: [{class: 'JSS1', amount: 30000, type: 'mandatory'}] },
-            { id: 'fd3', name: 'Uniform', amounts: [{class: 'JSS1', amount: 45000, type: 'optional'}] },
-            { id: 'fd4', name: 'Lab Fees', amounts: [{class: 'SSS2', amount: 50000, type: 'mandatory'}] }
+            { id: 'fd1', name: 'Tuition', category: 'Academic', isRecurring: true, amounts: [{class: 'JSS1', amount: 120000, type: 'mandatory'}, {class: 'SSS2', amount: 150000, type: 'mandatory'}] },
+            { id: 'fd2', name: 'Books', category: 'Academic', isRecurring: false, amounts: [{class: 'JSS1', amount: 30000, type: 'mandatory'}] },
+            { id: 'fd3', name: 'Uniform', category: 'Supplies', isRecurring: false, amounts: [{class: 'JSS1', amount: 45000, type: 'optional'}] },
+            { id: 'fd4', name: 'Lab Fees', category: 'Academic', isRecurring: true, amounts: [{class: 'SSS2', amount: 50000, type: 'mandatory'}] }
         ],
         adminUser: { name: 'Mrs. Adebayo', email: 'admin@sunnydale.com' },
         planId: 'plan_enterprise',
@@ -120,9 +114,8 @@ export const mockSchools: School[] = [
 
 export const mockPlatformConfig: PlatformConfig = {
     websiteContent: {
-        siteTitle: 'SchoolFees.NG',
-        logoUrl: 'https://placehold.co/100x100/2563EB/FFFFFF/png?text=SF',
-        whatsappNumber: '+2348012345678',
+        title: 'SchoolFees.NG',
+        logo: 'https://placehold.co/100x100/2563EB/FFFFFF/png?text=SF',
         trustedByLogos: [],
         menuItems: [
             { text: 'Features', link: '#features' },
@@ -142,9 +135,9 @@ export const mockPlatformConfig: PlatformConfig = {
         testimonials: {
             title: 'What School Administrators Are Saying',
             items: [
-                { quote: 'SchoolFees.NG has reduced our administrative workload by at least 50%. Reconciliation is now a breeze!', name: 'Mrs. Chika Okonkwo', title: 'Proprietress, Bright Stars Academy' },
-                { quote: 'The parent portal is fantastic. Our parents love the transparency and ease of payment.', name: 'Mr. David Audu', title: 'Bursar, Kings College Lagos' },
-                { quote: 'The AI insights feature is a game-changer. It helped us identify potential defaulters early and engage them proactively.', name: 'Dr. Amina Yusuf', title: 'Head of School, The Learning Tree' }
+                { id: 'test1', quote: 'SchoolFees.NG has reduced our administrative workload by at least 50%. Reconciliation is now a breeze!', name: 'Mrs. Chika Okonkwo', title: 'Proprietress, Bright Stars Academy' },
+                { id: 'test2', quote: 'The parent portal is fantastic. Our parents love the transparency and ease of payment.', name: 'Mr. David Audu', title: 'Bursar, Kings College Lagos' },
+                { id: 'test3', quote: 'The AI insights feature is a game-changer. It helped us identify potential defaulters early and engage them proactively.', name: 'Dr. Amina Yusuf', title: 'Head of School, The Learning Tree' }
             ]
         },
         cta: {
@@ -152,17 +145,13 @@ export const mockPlatformConfig: PlatformConfig = {
             subtitle: 'Start your 7-day free trial today. No credit card required.',
             buttonText: 'Get Started for Free'
         },
-        theme: {
-            primary: '#2563EB',
-            secondary: '#111827',
-            accent: '#14B8A6'
-        },
+        theme: 'blue',
         sectionOrder: ['hero', 'features', 'testimonials', 'pricing', 'cta']
     },
     pricingPlans: [
-        { id: 'plan_starter', name: 'Starter', prices: { monthly: 15000, termly: 40000, yearly: 100000 }, studentLimit: 100, teamMemberLimit: 5, features: ['Up to 100 Students', 'Online Payment Collection', 'Automated Receipts', 'Basic Reporting'] },
-        { id: 'plan_advanced', name: 'Advanced', prices: { monthly: 35000, termly: 95000, yearly: 250000 }, studentLimit: 500, teamMemberLimit: 20, features: ['Up to 500 Students', 'All Starter Features', 'Automated Reminders', 'Communication Center'] },
-        { id: 'plan_enterprise', name: 'Enterprise', prices: { monthly: 75000, termly: 200000, yearly: 550000 }, studentLimit: 2000, teamMemberLimit: 50, features: ['Unlimited Students', 'All Advanced Features', 'AI Debt Insights', 'Payroll Management', 'Dedicated Support'] }
+        { id: 'plan_starter', name: 'Starter', prices: { monthly: 15000, yearly: 100000 }, limits: { students: 100, staff: 5, storage: '10GB' }, features: ['Up to 100 Students', 'Online Payment Collection', 'Automated Receipts', 'Basic Reporting'] },
+        { id: 'plan_advanced', name: 'Advanced', prices: { monthly: 35000, yearly: 250000 }, limits: { students: 500, staff: 20, storage: '50GB' }, features: ['Up to 500 Students', 'All Starter Features', 'Automated Reminders', 'Communication Center'] },
+        { id: 'plan_enterprise', name: 'Enterprise', prices: { monthly: 75000, yearly: 550000 }, limits: { students: 2000, staff: 50, storage: 'Unlimited' }, features: ['Unlimited Students', 'All Advanced Features', 'AI Debt Insights', 'Payroll Management', 'Dedicated Support'] }
     ],
     coupons: [
         { id: 'coupon1', code: 'SAVE10', discountPercent: 10, status: 'Active', expiryDate: null }
@@ -182,10 +171,10 @@ export const mockPlatformConfig: PlatformConfig = {
         { id: 'ticket1', schoolId: 'sch_sunnydale_123', subject: 'Problem with Paystack Integration', message: 'We are having issues...', status: 'New', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
     ],
     knowledgeBaseArticles: [
-        { id: 'kb1', slug: 'how-to-add-student', title: 'How to Add a New Student', content: '## Adding Students\nTo add a new student, navigate to the **Students** page and click the "Add New Student" button.', category: 'Students', status: 'Published', createdAt: new Date().toISOString() },
-        { id: 'kb2', slug: 'setting-up-fees', title: 'Setting Up Your Fee Structure', content: 'This is an article about setting up fees.', category: 'Settings', status: 'Published', createdAt: new Date().toISOString() }
+        { id: 'kb1', title: 'How to Add a New Student', content: '## Adding Students\nTo add a new student, navigate to the **Students** page and click the "Add New Student" button.', category: 'Students', status: 'published', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [] },
+        { id: 'kb2', title: 'Setting Up Your Fee Structure', content: 'This is an article about setting up fees.', category: 'Settings', status: 'published', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [] }
     ],
     blogPosts: [
-        { id: 'blog1', slug: '5-ways-to-improve-collections', title: '5 Ways to Improve Fee Collection', excerpt: 'Discover proven strategies...', content: 'Full content here.', authorId: 'user_super_1', status: 'Published', createdAt: new Date().toISOString(), imageUrl: 'https://placehold.co/600x400/E0E7FF/4F46E5/png' }
+        { id: 'blog1', slug: '5-ways-to-improve-collections', title: '5 Ways to Improve Fee Collection', excerpt: 'Discover proven strategies...', content: 'Full content here.', author: 'Super Admin', status: 'published', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tags: [], imageUrl: 'https://placehold.co/600x400/E0E7FF/4F46E5/png' }
     ]
 };
