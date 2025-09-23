@@ -1,30 +1,55 @@
-import { GoogleGenerativeAI } from '@google/genai';
+// Note: Using dynamic import for Google Generative AI to handle potential import issues
+let GoogleGenerativeAI: any = null;
+
+// Try to import Google Generative AI, fall back gracefully if not available
+const initializeGoogleAI = async () => {
+  try {
+    const genAI = await import('@google/genai');
+    GoogleGenerativeAI = genAI.GoogleGenerativeAI;
+    return true;
+  } catch (error) {
+    console.log('Google Generative AI not available, using mock responses');
+    return false;
+  }
+};
 
 // Initialize Gemini AI
-let genAI: GoogleGenerativeAI | null = null;
+let genAI: any = null;
+let isInitialized = false;
 
-const initializeGemini = () => {
+const initializeGemini = async () => {
+  if (isInitialized) return genAI;
+  
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY;
   
   if (!apiKey) {
     console.log('Gemini API key not found. AI features will use mock responses.');
+    isInitialized = true;
     return null;
   }
   
   try {
-    genAI = new GoogleGenerativeAI(apiKey);
-    return genAI;
+    const hasGoogleAI = await initializeGoogleAI();
+    if (hasGoogleAI && GoogleGenerativeAI) {
+      genAI = new GoogleGenerativeAI(apiKey);
+      isInitialized = true;
+      return genAI;
+    } else {
+      console.log('Google AI library not available, using mock responses');
+      isInitialized = true;
+      return null;
+    }
   } catch (error) {
     console.error('Failed to initialize Gemini AI:', error);
+    isInitialized = true;
     return null;
   }
 };
 
-// Initialize on import
-initializeGemini();
-
 export const getAiDebtAnalysis = async (highRiskStudents: any[]): Promise<{ summary: string, recommendations: string[] }> => {
-  if (!genAI) {
+  const aiClient = await initializeGemini();
+  
+  if (!aiClient) {
     // Return mock analysis when API key is not available
     return {
       summary: `Analysis of ${highRiskStudents.length} high-risk students shows significant debt patterns. Total outstanding fees: ₦${highRiskStudents.reduce((sum, student) => sum + (student.outstandingFees || 0), 0).toLocaleString()}.`,
@@ -39,7 +64,7 @@ export const getAiDebtAnalysis = async (highRiskStudents: any[]): Promise<{ summ
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = aiClient.getGenerativeModel({ model: 'gemini-pro' });
     
     const studentSummary = highRiskStudents.map(student => 
       `${student.name}: ₦${student.outstandingFees?.toLocaleString() || '0'} outstanding`
@@ -91,7 +116,9 @@ export const getAiDebtAnalysis = async (highRiskStudents: any[]): Promise<{ summ
 };
 
 export const getChatbotResponse = async (message: string, context?: any): Promise<string> => {
-  if (!genAI) {
+  const aiClient = await initializeGemini();
+  
+  if (!aiClient) {
     // Return helpful mock responses when API key is not available
     const responses = [
       "I'm here to help with school fee management questions! However, AI services need to be configured with an API key to provide personalized responses.",
@@ -102,7 +129,7 @@ export const getChatbotResponse = async (message: string, context?: any): Promis
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = aiClient.getGenerativeModel({ model: 'gemini-pro' });
     
     const prompt = `
       You are an AI assistant for SchoolFee.NG, a Nigerian school fees management system.
