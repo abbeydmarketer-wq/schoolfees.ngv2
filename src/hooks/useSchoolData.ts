@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { School, PlatformConfig } from '../types.ts';
 import { getSupabase } from '../supabaseClient';
+import { normalizePlatformConfig } from '../utils/normalizePlatformConfig.ts';
 
 interface UseSchoolDataReturn {
   schools: School[];
@@ -189,25 +190,25 @@ const useSchoolData = (): UseSchoolDataReturn => {
           }
           
           setSchools(schoolsData || mockSchools);
-          setPlatformConfig(configData || mockPlatformConfig);
+          setPlatformConfig(normalizePlatformConfig(configData || mockPlatformConfig));
         } catch (supabaseError) {
           console.log('Supabase query failed, using mock data:', supabaseError);
           // Fall back to mock data
           setSchools(mockSchools);
-          setPlatformConfig(mockPlatformConfig);
+          setPlatformConfig(normalizePlatformConfig(mockPlatformConfig));
         }
       } else {
         // No Supabase connection, use mock data
         console.log('No Supabase connection, using mock data');
         setSchools(mockSchools);
-        setPlatformConfig(mockPlatformConfig);
+        setPlatformConfig(normalizePlatformConfig(mockPlatformConfig));
       }
     } catch (err) {
       console.error('Data fetch error:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
       // Still provide mock data even if there's an error
       setSchools(mockSchools);
-      setPlatformConfig(mockPlatformConfig);
+      setPlatformConfig(normalizePlatformConfig(mockPlatformConfig));
     } finally {
       setIsLoading(false);
     }

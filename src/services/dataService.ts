@@ -21,6 +21,7 @@ import {
 } from '../types.ts';
 import type { NewSchoolRegistrationData } from '../types.ts';
 import { mockPlatformConfig, mockSchools } from './mockData.ts';
+import { normalizePlatformConfig } from '../utils/normalizePlatformConfig.ts';
 
 export { ALL_SCHOOL_CLASSES } from './constants.ts';
 
@@ -228,11 +229,11 @@ export const getPlatformConfig = async (): Promise<PlatformConfig> => {
     const supabase = getSupabase();
     if (!supabase) {
         console.log("Running in offline mode. Returning mock platform config.");
-        return Promise.resolve(JSON.parse(JSON.stringify(offlinePlatformConfig)));
+        return Promise.resolve(normalizePlatformConfig(JSON.parse(JSON.stringify(offlinePlatformConfig))));
     }
     const { data, error } = await supabase.from('platform_config').select('data').limit(1).single();
     if (error) throw new Error("Failed to load platform configuration.");
-    return data.data as PlatformConfig;
+    return normalizePlatformConfig(data.data);
 };
 
 export const getSchools = async (): Promise<School[]> => {

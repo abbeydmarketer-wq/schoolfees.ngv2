@@ -63,7 +63,7 @@ export const triggerPrint = (
             type: type,
             school: school,
             template: template,
-            themeColor: platformConfig.websiteContent.theme.primary,
+            themeColor: platformConfig.websiteContent?.theme?.primary ?? '#3b82f6',
             paperSaver: paperSaver
         }));
         
