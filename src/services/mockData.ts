@@ -116,7 +116,11 @@ export const mockPlatformConfig: PlatformConfig = {
                 { id: 'test3', quote: 'The AI insights feature is a game-changer. It helped us identify potential defaulters early and engage them proactively.', name: 'Dr. Amina Yusuf', title: 'Head of School, The Learning Tree' }
             ]
         },
-        theme: 'blue',
+        theme: {
+            primary: '#2563eb',
+            secondary: '#64748b',
+            accent: '#8b5cf6'
+        },
         contactInfo: {
             email: 'support@schoolfees.ng',
             phone: '+2348012345678',

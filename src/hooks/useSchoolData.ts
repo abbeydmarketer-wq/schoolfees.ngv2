@@ -99,7 +99,11 @@ const mockPlatformConfig: PlatformConfig = {
         }
       ]
     },
-    theme: 'light',
+    theme: {
+      primary: '#3b82f6',
+      secondary: '#64748b',
+      accent: '#8b5cf6'
+    },
     contactInfo: {
       email: 'hello@schoolfee.ng',
       phone: '+234-809-876-5432',
