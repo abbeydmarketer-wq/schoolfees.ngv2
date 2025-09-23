@@ -5,6 +5,7 @@ import { CurrentUser, View, School, Student } from './types.ts';
 import { onAuthStateChange, signOut, signIn } from './services/authService.ts';
 import { normalizePlatformConfig } from './utils/normalizePlatformConfig.ts';
 import AuthPage from './components/AuthPage.tsx';
+import MarketingLandingPage from './components/MarketingLandingPage.tsx';
 import SchoolLandingPage from './components/SchoolLandingPage.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import { DesktopSidebar } from './components/DesktopSidebar.tsx';
@@ -43,6 +44,9 @@ const App: React.FC = () => {
 
     // Super admin impersonation state
     const [impersonatedSchool, setImpersonatedSchool] = useState<School | null>(null);
+    
+    // Auth modal state
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Apply dynamic theme from platformConfig
     const normalizedConfig = platformConfig ? normalizePlatformConfig(platformConfig) : null;
@@ -69,6 +73,8 @@ const App: React.FC = () => {
             setCurrentUser(user);
             setAuthLoading(false);
             if (user?.role === 'schoolAdmin') setActiveView('Dashboard');
+            // Close auth modal on successful login
+            if (user) setShowAuthModal(false);
         });
         return () => subscription.unsubscribe();
     }, []);
@@ -110,7 +116,34 @@ const App: React.FC = () => {
             return <SchoolLandingPage school={schoolForSubdomain} onLogin={handleLogin} />;
         }
         if (normalizedConfig) {
-            return <AuthPage platformConfig={normalizedConfig} />;
+            return (
+                <>
+                    <MarketingLandingPage 
+                        platformConfig={normalizedConfig}
+                        onSignInClick={() => setShowAuthModal(true)}
+                        onGetStartedClick={() => setShowAuthModal(true)}
+                    />
+                    
+                    {/* Auth Modal */}
+                    {showAuthModal && (
+                        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+                            <div className="modal-box max-w-md">
+                                <button 
+                                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                    onClick={() => setShowAuthModal(false)}
+                                    aria-label="Close modal"
+                                >
+                                    ✕
+                                </button>
+                                <AuthPage platformConfig={normalizedConfig} />
+                            </div>
+                            <div className="modal-backdrop" onClick={() => setShowAuthModal(false)}>
+                                <button>close</button>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
         }
         return <LoadingSpinner />;
     }
