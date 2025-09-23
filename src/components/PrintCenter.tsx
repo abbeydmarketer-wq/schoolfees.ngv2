@@ -1,5 +1,8 @@
 import React from 'react';
 
+// Template ID type for print templates
+export type TemplateId = 'Modern' | 'Classic' | 'Minimal';
+
 interface PrintCenterProps {
   school: any;
   platformConfig: any;
