@@ -14,8 +14,8 @@ export const mockSchools: School[] = [
                 parentName: 'Mr. Okoro', parentEmail: 'parent@sunnydale.com', parentPhone: '08098765432', parentRelationship: 'Father',
                 preferredPaymentMethod: 'Bank Transfer', totalFees: 150000, amountPaid: 150000, outstandingFees: 0, lastPaymentDate: '2024-05-20', debtRisk: RiskLevel.Low,
                 fees: [
-                    { id: 'fee1_1', type: 'Tuition', amount: 120000, paidAmount: 120000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third },
-                    { id: 'fee1_2', type: 'Books', amount: 30000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third }
+                    { id: 'fee1_1', type: 'Tuition', amount: 120000, paidAmount: 120000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
+                    { id: 'fee1_2', type: 'Books', amount: 30000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' }
                 ],
                 payments: [{ id: 'pay1', studentId: 'stu_sunnydale_123_1', amount: 150000, date: '2024-05-20', method: 'Paystack', status: 'Completed', description: 'Third Term Fees', allocations: [{feeId: 'fee1_1', amount: 120000}, {feeId: 'fee1_2', amount: 30000}]}],
                 discounts: []
@@ -25,8 +25,8 @@ export const mockSchools: School[] = [
                 parentName: 'Mrs. Bello', parentEmail: 'bello.a@example.com', parentPhone: '08011223344', parentRelationship: 'Mother',
                 preferredPaymentMethod: 'Card', totalFees: 165000, amountPaid: 80000, outstandingFees: 85000, lastPaymentDate: '2024-06-01', debtRisk: RiskLevel.High,
                 fees: [
-                    { id: 'fee2_1', type: 'Tuition', amount: 120000, paidAmount: 80000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third },
-                    { id: 'fee2_2', type: 'Uniform', amount: 45000, paidAmount: 0, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third }
+                    { id: 'fee2_1', type: 'Tuition', amount: 120000, paidAmount: 80000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' },
+                    { id: 'fee2_2', type: 'Uniform', amount: 45000, paidAmount: 0, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
                 ],
                 payments: [{ id: 'pay2', studentId: 'stu_sunnydale_123_2', amount: 80000, date: '2024-06-01', method: 'Manual Bank Transfer', status: 'Completed', description: 'Part payment', allocations: [{feeId: 'fee2_1', amount: 80000}]}],
                 discounts: []
@@ -36,8 +36,8 @@ export const mockSchools: School[] = [
                 parentName: 'Mr. Adeboye', parentEmail: 'adeboye.d@example.com', parentPhone: '08055667788', parentRelationship: 'Father',
                 preferredPaymentMethod: 'Manual Bank Transfer', totalFees: 200000, amountPaid: 180000, outstandingFees: 20000, lastPaymentDate: '2024-05-18', debtRisk: RiskLevel.Medium,
                 fees: [
-                    { id: 'fee3_1', type: 'Tuition', amount: 150000, paidAmount: 150000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third },
-                    { id: 'fee3_2', type: 'Lab Fees', amount: 50000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third }
+                    { id: 'fee3_1', type: 'Tuition', amount: 150000, paidAmount: 150000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'paid' },
+                    { id: 'fee3_2', type: 'Lab Fees', amount: 50000, paidAmount: 30000, dueDate: '2024-05-01', session: '2023/2024', term: Term.Third, status: 'overdue' }
                 ],
                 payments: [{ id: 'pay3', studentId: 'stu_sunnydale_123_3', amount: 180000, date: '2024-05-18', method: 'Manual Bank Transfer', status: 'Pending Verification', description: 'Full payment', allocations: [{feeId: 'fee3_1', amount: 150000}, {feeId: 'fee3_2', amount: 30000}], proofOfPaymentUrl: 'https://placehold.co/600x400.png'}],
                 discounts: []

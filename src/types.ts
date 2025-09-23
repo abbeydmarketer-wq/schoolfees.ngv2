@@ -250,6 +250,19 @@ export enum PaymentStatus {
   Partial = 'partial'
 }
 
+export enum Term {
+  First = 'first',
+  Second = 'second', 
+  Third = 'third'
+}
+
+export enum UserRole {
+  Administrator = 'administrator',
+  Teacher = 'teacher',
+  Student = 'student',
+  Parent = 'parent'
+}
+
 // View types for navigation
 export type View = 
   | 'Dashboard'
