@@ -335,36 +335,34 @@ class FeeManagementService {
     return null;
   }
 
-  // Payment Processing
+  // Payment Processing (Legacy method - use processParentFeePayment for new implementations)
   async processPayment(
     feeRecordId: string, 
     amount: number, 
-    paymentMethod: 'stripe' | 'paystack' | 'flutterwave' | 'bank_transfer' | 'cash',
+    paymentGateway: 'paystack' | 'flutterwave' | 'manual',
     processedBy: string,
     notes?: string
   ): Promise<FeePaymentTransaction> {
+    const reference = `SF_LEGACY_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     const transaction: FeePaymentTransaction = {
       id: Date.now().toString(),
       schoolId: '', // Will be filled from fee record
       feeRecordId,
       studentId: '', // Will be filled from fee record
       amount,
-      paymentMethod,
-      status: paymentMethod === 'cash' || paymentMethod === 'bank_transfer' ? 'completed' : 'pending',
+      currency: 'NGN',
+      paymentGateway,
+      paymentMethod: paymentGateway === 'manual' ? 'bank_transfer' : 'card',
+      reference,
+      status: paymentGateway === 'manual' ? 'completed' : 'pending',
+      initiatedAt: new Date().toISOString(),
       processedBy,
       notes,
       createdAt: new Date().toISOString()
     };
 
-    if (paymentMethod === 'stripe') {
-      try {
-        const paymentIntent = await this.createStripePaymentIntent(amount, feeRecordId);
-        transaction.stripePaymentIntentId = paymentIntent.clientSecret;
-      } catch (error) {
-        console.error('Failed to create Stripe payment intent:', error);
-        throw error;
-      }
-    }
+    // No longer using Stripe - removed deprecated code
 
     const supabase = getSupabase();
     if (supabase) {
@@ -698,6 +696,110 @@ class FeeManagementService {
     // Update in offline mode
     console.log('Payment transaction status updated in offline mode:', { reference, status, updates });
     return true;
+  }
+
+  // Student Fee Records Management
+  async getStudentFeeRecords(schoolId: string, studentId: string): Promise<ParentFeeRecord[]> {
+    const supabase = getSupabase();
+    
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('parent_fee_records')
+          .select('*')
+          .eq('schoolId', schoolId)
+          .eq('studentId', studentId)
+          .order('nextDueDate');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.warn('Failed to load student fee records:', error);
+      }
+    }
+
+    // Return mock data for offline mode
+    return this.getMockParentFeeRecords('').filter(record => record.studentId === studentId);
+  }
+
+  // Parent Fee Records Management  
+  async getParentFeeRecords(parentId: string): Promise<ParentFeeRecord[]> {
+    const supabase = getSupabase();
+    
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('parent_fee_records')
+          .select('*')
+          .eq('parentId', parentId)
+          .order('dueDate');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.warn('Failed to load parent fee records:', error);
+      }
+    }
+
+    // Return mock data for offline mode
+    return this.getMockParentFeeRecords(parentId);
+  }
+
+  private getMockParentFeeRecords(parentId: string): ParentFeeRecord[] {
+    // Generate mock fee records for the parent's children
+    return [
+      {
+        id: 'fee_record_1',
+        schoolId: 'sch_sunnydale_123',
+        studentId: 'stu_sunnydale_123_1',
+        feeStructureId: 'Tuition Fee',
+        academicYear: '2023/2024',
+        totalAmount: 150000,
+        paidAmount: 0,
+        outstandingAmount: 150000,
+        lateFees: 0,
+        discountApplied: 0,
+        paymentStatus: 'pending',
+        installmentPlan: 'full',
+        nextDueDate: '2024-02-15',
+        createdAt: '2023-09-01T00:00:00Z',
+        updatedAt: '2023-09-01T00:00:00Z'
+      },
+      {
+        id: 'fee_record_2',
+        schoolId: 'sch_sunnydale_123',
+        studentId: 'stu_sunnydale_123_1',
+        feeStructureId: 'Library Fee',
+        academicYear: '2023/2024',
+        totalAmount: 25000,
+        paidAmount: 0,
+        outstandingAmount: 25000,
+        lateFees: 2500,
+        discountApplied: 0,
+        paymentStatus: 'overdue',
+        installmentPlan: 'full',
+        nextDueDate: '2024-02-10',
+        createdAt: '2023-09-01T00:00:00Z',
+        updatedAt: '2023-09-01T00:00:00Z'
+      },
+      {
+        id: 'fee_record_3',
+        schoolId: 'sch_sunnydale_123',
+        studentId: 'stu_sunnydale_123_2',
+        feeStructureId: 'Sports Fee',
+        academicYear: '2023/2024',
+        totalAmount: 35000,
+        paidAmount: 0,
+        outstandingAmount: 35000,
+        lateFees: 0,
+        discountApplied: 0,
+        paymentStatus: 'pending',
+        installmentPlan: 'full',
+        nextDueDate: '2024-02-20',
+        createdAt: '2023-09-01T00:00:00Z',
+        updatedAt: '2023-09-01T00:00:00Z'
+      }
+    ];
   }
 
   // Mock Data Methods (for offline/demo mode)

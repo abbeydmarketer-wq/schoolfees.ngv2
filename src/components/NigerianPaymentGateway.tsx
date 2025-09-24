@@ -5,7 +5,7 @@ import { FlutterwavePayment } from './FlutterwavePayment';
 
 export type PaymentGateway = 'paystack' | 'flutterwave' | 'manual';
 
-interface PaymentData {
+export interface PaymentData {
   amount: number;
   email: string;
   phone: string;

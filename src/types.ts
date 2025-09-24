@@ -711,18 +711,25 @@ export interface ParentFeeRecord {
 
 export interface FeePaymentTransaction {
   id: string;
-  schoolId: string;
+  schoolId?: string;
   feeRecordId: string;
   studentId: string;
+  parentId?: string; // Added for parent payment tracking
   amount: number;
-  paymentMethod: 'stripe' | 'paystack' | 'flutterwave' | 'bank_transfer' | 'cash';
+  currency: string; // Added for multi-currency support
+  paymentGateway: 'paystack' | 'flutterwave' | 'manual'; // Updated for Nigerian gateways
+  paymentMethod?: 'card' | 'bank_transfer' | 'ussd' | 'mobile_money' | 'cash'; // Nigerian payment methods
+  reference: string; // Payment reference from gateway
   transactionId?: string;
-  stripePaymentIntentId?: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  status: 'pending' | 'completed' | 'failed' | 'refunded' | 'pending_verification'; // Added pending_verification
+  initiatedAt: string; // When payment was initiated
   paidAt?: string;
+  verifiedAt?: string; // When payment was verified
   notes?: string;
-  processedBy: string;
-  createdAt: string;
+  processedBy?: string; // Made optional for automatic payments
+  metadata?: any; // Additional payment data
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Combined billing dashboard types
