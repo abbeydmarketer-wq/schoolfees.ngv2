@@ -108,7 +108,7 @@ const MarketingLandingPage: React.FC<MarketingLandingPageProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </button>
-              <button onClick={() => scrollToSection('contact')} className="btn btn-outline btn-lg">
+              <button onClick={onSignInClick} className="btn btn-outline btn-lg">
                 View Demo
               </button>
             </div>
