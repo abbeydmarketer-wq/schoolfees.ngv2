@@ -157,8 +157,8 @@ const mockPlatformConfig: PlatformConfig = {
 };
 
 const useSchoolData = (): UseSchoolDataReturn => {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(null);
+  const [schools, setSchools] = useState<School[]>(mockSchools);
+  const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(normalizePlatformConfig(mockPlatformConfig));
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -199,18 +199,13 @@ const useSchoolData = (): UseSchoolDataReturn => {
         }
         setIsLoading(false);
       } else {
-        // No Supabase connection, use mock data immediately (no loading needed)
+        // No Supabase connection, mock data already initialized - nothing to do
         console.log('No Supabase connection, using mock data');
-        setSchools(mockSchools);
-        setPlatformConfig(normalizePlatformConfig(mockPlatformConfig));
-        setIsLoading(false);
       }
     } catch (err) {
       console.error('Data fetch error:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
-      // Still provide mock data even if there's an error
-      setSchools(mockSchools);
-      setPlatformConfig(normalizePlatformConfig(mockPlatformConfig));
+      // Mock data already initialized
       setIsLoading(false);
     }
   };
