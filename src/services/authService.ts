@@ -53,7 +53,7 @@ export const signIn = async (email: string, password: string): Promise<User | nu
       throw error;
     }
   } else {
-    // Offline/demo mode - Check against mock users
+    // Demo mode with localStorage - completely synchronous
     const mockUsers = [
       { email: 'super@schoolfees.ng', password: 'password123', role: 'superAdmin', id: 'user_super_1', name: 'Super Admin' },
       { email: 'admin@sunnydale.com', password: 'password123', role: 'schoolAdmin', schoolId: 'sch_sunnydale_123', id: 'user_sunnydale_admin', name: 'Mrs. Adebayo' },
@@ -76,8 +76,17 @@ export const signIn = async (email: string, password: string): Promise<User | nu
       schoolId: mockUser.schoolId
     };
     
+    // Store in localStorage for demo persistence
+    localStorage.setItem('demo_user', JSON.stringify(demoUser));
+    localStorage.setItem('demo_session', 'active');
+    
     currentUser = demoUser;
-    authChangeListeners.forEach(listener => listener(demoUser));
+    
+    // Immediate synchronous callback - no async operations
+    setTimeout(() => {
+      authChangeListeners.forEach(listener => listener(demoUser));
+    }, 0);
+    
     return demoUser;
   }
 };
@@ -87,6 +96,10 @@ export const signOut = async (): Promise<void> => {
   
   if (supabase) {
     await supabase.auth.signOut();
+  } else {
+    // Clear demo localStorage
+    localStorage.removeItem('demo_user');
+    localStorage.removeItem('demo_session');
   }
   
   currentUser = null;
@@ -135,6 +148,24 @@ export const initializeAuth = async () => {
         authChangeListeners.forEach(listener => listener(null));
       }
     });
+  } else {
+    // Demo mode - check localStorage for existing session
+    const demoSession = localStorage.getItem('demo_session');
+    const demoUserData = localStorage.getItem('demo_user');
+    
+    if (demoSession === 'active' && demoUserData) {
+      try {
+        const user = JSON.parse(demoUserData) as User;
+        currentUser = user;
+        setTimeout(() => {
+          authChangeListeners.forEach(listener => listener(user));
+        }, 0);
+      } catch (e) {
+        console.log('Invalid demo user data in localStorage');
+        localStorage.removeItem('demo_user');
+        localStorage.removeItem('demo_session');
+      }
+    }
   }
 };
 
