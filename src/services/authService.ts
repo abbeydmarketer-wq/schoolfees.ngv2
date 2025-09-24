@@ -53,13 +53,27 @@ export const signIn = async (email: string, password: string): Promise<User | nu
       throw error;
     }
   } else {
-    // Offline/demo mode
+    // Offline/demo mode - Check against mock users
+    const mockUsers = [
+      { email: 'super@schoolfees.ng', password: 'password123', role: 'superAdmin', id: 'user_super_1', name: 'Super Admin' },
+      { email: 'admin@sunnydale.com', password: 'password123', role: 'schoolAdmin', schoolId: 'sch_sunnydale_123', id: 'user_sunnydale_admin', name: 'Mrs. Adebayo' },
+      { email: 'parent@sunnydale.com', password: 'password123', role: 'parent', schoolId: 'sch_sunnydale_123', id: 'user_sunnydale_parent', name: 'Mr. Okoro' },
+      { email: 'teacher@sunnydale.com', password: 'password123', role: 'teacher', schoolId: 'sch_sunnydale_123', id: 'tm_sunnydale_t1', name: 'Mr. James' },
+      { email: 'staff@sunnydale.com', password: 'password123', role: 'staff', schoolId: 'sch_sunnydale_123', id: 'tm_sunnydale_s1', name: 'Funke Akindele' },
+    ];
+
+    const mockUser = mockUsers.find(u => u.email === email && u.password === password);
+    
+    if (!mockUser) {
+      throw new Error('Invalid email or password');
+    }
+    
     const demoUser: User = {
-      id: 'demo-user',
-      email: email,
-      name: 'Demo User',
-      role: 'schoolAdmin',
-      schoolId: 'demo-school-id'
+      id: mockUser.id,
+      email: mockUser.email,
+      name: mockUser.name,
+      role: mockUser.role as User['role'],
+      schoolId: mockUser.schoolId
     };
     
     currentUser = demoUser;
