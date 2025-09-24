@@ -31,7 +31,7 @@ export const FlutterwavePayment: React.FC<FlutterwavePaymentProps> = ({
 
   // Flutterwave configuration
   const config = {
-    public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK-test-temp-key',
+    public_key: (import.meta as any)?.env?.VITE_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK-test-temp-key',
     tx_ref: `SF_FLW_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     amount,
     currency: 'NGN',

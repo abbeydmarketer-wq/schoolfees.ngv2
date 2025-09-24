@@ -470,6 +470,236 @@ class FeeManagementService {
     }
   }
 
+  // Nigerian Payment Gateway Processing for Parent Fee Payments
+  async processParentFeePayment(
+    paymentData: {
+      parentId: string;
+      studentId: string;
+      feeRecordId: string;
+      amount: number;
+      paymentGateway: 'paystack' | 'flutterwave' | 'manual';
+      customerEmail: string;
+      customerPhone: string;
+      customerName: string;
+    }
+  ): Promise<{ paymentReference: string; paymentUrl?: string; status: string }> {
+    try {
+      const { 
+        parentId, 
+        studentId, 
+        feeRecordId, 
+        amount, 
+        paymentGateway, 
+        customerEmail, 
+        customerPhone, 
+        customerName 
+      } = paymentData;
+
+      console.log('Processing parent fee payment:', paymentData);
+
+      if (paymentGateway === 'paystack') {
+        // Initialize Paystack payment for parent fee
+        const reference = `SF_PARENT_PAYSTACK_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        // In real implementation, this would call Paystack API
+        const mockPaystackResponse = {
+          paymentReference: reference,
+          paymentUrl: `https://checkout.paystack.com/${reference}`,
+          status: 'pending'
+        };
+
+        // Record the payment initiation
+        await this.recordPaymentTransaction({
+          id: reference,
+          parentId,
+          studentId,
+          feeRecordId,
+          amount,
+          currency: 'NGN',
+          paymentGateway: 'paystack',
+          status: 'pending',
+          reference,
+          initiatedAt: new Date().toISOString(),
+          metadata: {
+            customerEmail,
+            customerPhone,
+            customerName
+          }
+        });
+
+        return mockPaystackResponse;
+
+      } else if (paymentGateway === 'flutterwave') {
+        // Initialize Flutterwave payment for parent fee
+        const tx_ref = `SF_PARENT_FLW_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        // In real implementation, this would call Flutterwave API
+        const mockFlutterwaveResponse = {
+          paymentReference: tx_ref,
+          paymentUrl: `https://checkout.flutterwave.com/${tx_ref}`,
+          status: 'pending'
+        };
+
+        // Record the payment initiation
+        await this.recordPaymentTransaction({
+          id: tx_ref,
+          parentId,
+          studentId,
+          feeRecordId,
+          amount,
+          currency: 'NGN',
+          paymentGateway: 'flutterwave',
+          status: 'pending',
+          reference: tx_ref,
+          initiatedAt: new Date().toISOString(),
+          metadata: {
+            customerEmail,
+            customerPhone,
+            customerName
+          }
+        });
+
+        return mockFlutterwaveResponse;
+
+      } else {
+        // Manual/Bank transfer payment
+        const reference = `SF_PARENT_MANUAL_${Date.now()}`;
+        
+        // Record the manual payment initiation
+        await this.recordPaymentTransaction({
+          id: reference,
+          parentId,
+          studentId,
+          feeRecordId,
+          amount,
+          currency: 'NGN',
+          paymentGateway: 'manual',
+          status: 'pending_verification',
+          reference,
+          initiatedAt: new Date().toISOString(),
+          metadata: {
+            customerEmail,
+            customerPhone,
+            customerName,
+            paymentMethod: 'bank_transfer'
+          }
+        });
+
+        return {
+          paymentReference: reference,
+          status: 'pending_verification'
+        };
+      }
+
+    } catch (error) {
+      console.error('Error processing parent fee payment:', error);
+      throw error;
+    }
+  }
+
+  async verifyParentFeePayment(
+    reference: string, 
+    paymentGateway: 'paystack' | 'flutterwave'
+  ): Promise<{ status: string; amount: number; verified: boolean }> {
+    try {
+      console.log('Verifying parent fee payment:', { reference, paymentGateway });
+
+      if (paymentGateway === 'paystack') {
+        // In real implementation, verify with Paystack API
+        // For offline mode, return mock success
+        const verification = {
+          status: 'success',
+          amount: 50000, // Amount in kobo
+          verified: true
+        };
+
+        // Update payment transaction status
+        await this.updatePaymentTransactionStatus(reference, 'completed', {
+          verifiedAt: new Date().toISOString(),
+          verificationResponse: verification
+        });
+
+        return verification;
+
+      } else if (paymentGateway === 'flutterwave') {
+        // In real implementation, verify with Flutterwave API
+        // For offline mode, return mock success
+        const verification = {
+          status: 'successful',
+          amount: 500, // Amount in Naira
+          verified: true
+        };
+
+        // Update payment transaction status
+        await this.updatePaymentTransactionStatus(reference, 'completed', {
+          verifiedAt: new Date().toISOString(),
+          verificationResponse: verification
+        });
+
+        return verification;
+      }
+
+      throw new Error('Unsupported payment gateway for verification');
+
+    } catch (error) {
+      console.error('Error verifying parent fee payment:', error);
+      throw error;
+    }
+  }
+
+  async recordPaymentTransaction(transaction: FeePaymentTransaction): Promise<FeePaymentTransaction> {
+    const supabase = getSupabase();
+    
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('fee_payment_transactions')
+          .insert([transaction])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.warn('Failed to record payment transaction in database:', error);
+      }
+    }
+
+    // Store in offline mode (could use localStorage if needed)
+    console.log('Payment transaction recorded in offline mode:', transaction);
+    return transaction;
+  }
+
+  async updatePaymentTransactionStatus(
+    reference: string, 
+    status: string, 
+    updates: any = {}
+  ): Promise<boolean> {
+    const supabase = getSupabase();
+    
+    if (supabase) {
+      try {
+        const { error } = await supabase
+          .from('fee_payment_transactions')
+          .update({ 
+            status, 
+            ...updates,
+            updatedAt: new Date().toISOString() 
+          })
+          .eq('reference', reference);
+        
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.warn('Failed to update payment transaction status:', error);
+      }
+    }
+
+    // Update in offline mode
+    console.log('Payment transaction status updated in offline mode:', { reference, status, updates });
+    return true;
+  }
+
   // Mock Data Methods (for offline/demo mode)
   private getMockFeeCategories(schoolId: string): FeeCategory[] {
     return [

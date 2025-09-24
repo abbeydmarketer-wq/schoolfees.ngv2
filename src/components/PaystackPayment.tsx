@@ -32,7 +32,7 @@ export const PaystackPayment: React.FC<PaystackPaymentProps> = ({
     reference: `SF_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     email,
     amount: Math.round(amount * 100), // Convert Naira to kobo
-    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_temp_key',
+    publicKey: (import.meta as any)?.env?.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_temp_key',
     currency: 'NGN',
     channels: ['card', 'bank', 'ussd', 'mobile_money'],
     metadata: {
@@ -63,8 +63,8 @@ export const PaystackPayment: React.FC<PaystackPaymentProps> = ({
     
     setIsProcessing(true);
     
-    initializePayment(
-      (reference) => {
+    initializePayment({
+      onSuccess: (reference) => {
         setIsProcessing(false);
         console.log('Paystack payment successful:', reference);
         onSuccess({
@@ -74,12 +74,12 @@ export const PaystackPayment: React.FC<PaystackPaymentProps> = ({
           currency: 'NGN'
         });
       },
-      () => {
+      onClose: () => {
         setIsProcessing(false);
         console.log('Paystack payment closed');
         onClose();
       }
-    );
+    });
   };
 
   // Check if Paystack public key is configured

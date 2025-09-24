@@ -324,53 +324,116 @@ class BillingService {
     return this.getMockSuperAdminMetrics();
   }
 
-  // Stripe Integration Methods (based on integration blueprint)
-  async createStripePaymentIntent(amount: number, schoolId: string): Promise<{ clientSecret: string }> {
+  // Nigerian Payment Gateway Integration Methods
+  async createPaystackPaymentInitiation(amount: number, schoolId: string, metadata: any = {}): Promise<{ reference: string; authorization_url?: string }> {
     try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: amount,
-          metadata: { schoolId }
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create payment intent');
-      }
-
-      const data = await response.json();
-      return { clientSecret: data.clientSecret };
+      // In a real implementation, this would call Paystack's initialization API
+      // For offline mode, we'll return a mock response
+      const reference = `SF_PAYSTACK_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      console.log('Creating Paystack subscription payment:', { amount, schoolId, reference, metadata });
+      
+      return { 
+        reference,
+        authorization_url: `https://checkout.paystack.com/${reference}` // Mock URL
+      };
     } catch (error) {
-      console.error('Error creating payment intent:', error);
+      console.error('Error creating Paystack payment initiation:', error);
       throw error;
     }
   }
 
-  async createStripeSubscription(schoolId: string, planId: string): Promise<{ clientSecret: string }> {
+  async createFlutterwavePaymentInitiation(amount: number, schoolId: string, metadata: any = {}): Promise<{ tx_ref: string; payment_link?: string }> {
     try {
-      const response = await fetch('/api/get-or-create-subscription', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          schoolId,
-          planId
-        }),
-      });
+      // In a real implementation, this would call Flutterwave's initialization API
+      // For offline mode, we'll return a mock response
+      const tx_ref = `SF_FLW_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      console.log('Creating Flutterwave subscription payment:', { amount, schoolId, tx_ref, metadata });
+      
+      return { 
+        tx_ref,
+        payment_link: `https://checkout.flutterwave.com/${tx_ref}` // Mock URL
+      };
+    } catch (error) {
+      console.error('Error creating Flutterwave payment initiation:', error);
+      throw error;
+    }
+  }
 
-      if (!response.ok) {
-        throw new Error('Failed to create subscription');
+  async verifyPaystackPayment(reference: string): Promise<{ status: string; amount: number; currency: string; schoolId?: string }> {
+    try {
+      // In a real implementation, this would verify payment with Paystack API
+      // For offline mode, we'll return a mock successful verification
+      console.log('Verifying Paystack subscription payment:', reference);
+      
+      return {
+        status: 'success',
+        amount: 120000, // Mock amount in kobo
+        currency: 'NGN',
+        schoolId: 'sch_sunnydale_123'
+      };
+    } catch (error) {
+      console.error('Error verifying Paystack payment:', error);
+      throw error;
+    }
+  }
+
+  async verifyFlutterwavePayment(tx_ref: string): Promise<{ status: string; amount: number; currency: string; schoolId?: string }> {
+    try {
+      // In a real implementation, this would verify payment with Flutterwave API
+      // For offline mode, we'll return a mock successful verification
+      console.log('Verifying Flutterwave subscription payment:', tx_ref);
+      
+      return {
+        status: 'successful',
+        amount: 1200, // Mock amount in Naira
+        currency: 'NGN',
+        schoolId: 'sch_sunnydale_123'
+      };
+    } catch (error) {
+      console.error('Error verifying Flutterwave payment:', error);
+      throw error;
+    }
+  }
+
+  async processSchoolSubscriptionPayment(
+    schoolId: string, 
+    planId: string, 
+    paymentGateway: 'paystack' | 'flutterwave' | 'manual'
+  ): Promise<{ paymentReference: string; paymentUrl?: string }> {
+    try {
+      const plan = await this.getSubscriptionPlans().then(plans => 
+        plans.find(p => p.id === planId)
+      );
+      
+      if (!plan) {
+        throw new Error('Subscription plan not found');
       }
 
-      const data = await response.json();
-      return { clientSecret: data.clientSecret };
+      const amount = plan.monthlyPrice; // Amount in Naira
+
+      if (paymentGateway === 'paystack') {
+        const result = await this.createPaystackPaymentInitiation(amount, schoolId, { planId });
+        return { 
+          paymentReference: result.reference, 
+          paymentUrl: result.authorization_url 
+        };
+      } else if (paymentGateway === 'flutterwave') {
+        const result = await this.createFlutterwavePaymentInitiation(amount, schoolId, { planId });
+        return { 
+          paymentReference: result.tx_ref, 
+          paymentUrl: result.payment_link 
+        };
+      } else {
+        // Manual payment
+        const reference = `SF_MANUAL_${Date.now()}`;
+        return { 
+          paymentReference: reference
+        };
+      }
     } catch (error) {
-      console.error('Error creating subscription:', error);
+      console.error('Error processing school subscription payment:', error);
       throw error;
     }
   }
@@ -419,7 +482,7 @@ class BillingService {
         billingDate: '2024-01-01T00:00:00Z',
         paidAt: '2024-01-01T10:30:00Z',
         description: 'Professional Plan - January 2024',
-        paymentMethod: 'stripe'
+        paymentMethod: 'paystack'
       },
       {
         id: 'bill_2',
@@ -431,7 +494,7 @@ class BillingService {
         billingDate: '2024-01-01T00:00:00Z',
         paidAt: '2024-01-01T14:15:00Z',
         description: 'Basic Plan - January 2024',
-        paymentMethod: 'stripe'
+        paymentMethod: 'paystack'
       }
     ];
   }
