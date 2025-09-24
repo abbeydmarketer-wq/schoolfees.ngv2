@@ -38,7 +38,7 @@ const LoadingSpinner: React.FC = () => (
 const App: React.FC = () => {
     const { schools, platformConfig, isLoading, error, refreshData } = useSchoolData();
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-    const [authLoading, setAuthLoading] = useState(true);
+    const [authLoading, setAuthLoading] = useState(false);
     const [activeView, setActiveView] = useState<View>('Dashboard');
     const [schoolForSubdomain, setSchoolForSubdomain] = useState<School | null>(null);
 
