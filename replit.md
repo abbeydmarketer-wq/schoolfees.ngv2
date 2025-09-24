@@ -19,9 +19,10 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend Architecture
 - **Database**: Supabase as primary backend-as-a-service with PostgreSQL
-- **Offline Mode**: Comprehensive mock data system allowing full application functionality without backend
+- **Offline Mode**: Comprehensive mock data system with localStorage persistence for parent-student assignments
 - **Data Layer**: Service layer pattern with centralized data management through dataService.ts
 - **Authentication**: Supabase Auth with role-based access control and multi-tenant support
+- **Student Management**: localStorage-based persistence for parent accounts and student assignments, surviving page reloads
 
 ### AI Integration
 - **AI Provider**: Google Gemini AI for debt analysis and chatbot functionality
@@ -42,6 +43,18 @@ Preferred communication style: Simple, everyday language.
 - **Channels**: SMS and email communication with template management
 - **Automation**: Automated reminders, payment confirmations, and notification workflows
 - **Templates**: Customizable message templates with placeholder support
+
+### Student Management System
+- **Parent-Student Assignment**: Complete workflow for School Admins to create parent accounts and assign students
+- **Siblings Management**: Family grouping with bulk operations and discount eligibility detection  
+- **Persistent Relationships**: localStorage-based storage ensuring parent-child assignments survive browser sessions
+- **Family Operations**: Bulk fee management, sibling discounts, and comprehensive family relationship tracking
+
+### Billing & Fee Management
+- **Two-Tier Payment Model**: SuperAdmin bills schools for platform subscriptions, School Admin configures parent fee structures
+- **Nigerian Payment Focus**: Parents pay school fees via local payment gateways (Paystack, Flutterwave, Payvessel)
+- **SuperAdmin Dashboard**: School subscription management, payment tracking, and billing administration
+- **School Admin Fee Management**: Parent fee configuration, payment schedules, and installment plan setup
 
 ### Reporting & Analytics
 - **Financial Reports**: Revenue tracking, debt aging analysis, and payment collection reports
