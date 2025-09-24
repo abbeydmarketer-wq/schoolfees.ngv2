@@ -82,10 +82,8 @@ export const signIn = async (email: string, password: string): Promise<User | nu
     
     currentUser = demoUser;
     
-    // Immediate synchronous callback - no async operations
-    setTimeout(() => {
-      authChangeListeners.forEach(listener => listener(demoUser));
-    }, 0);
+    // Immediate synchronous callback - truly instant
+    authChangeListeners.forEach(listener => listener(demoUser));
     
     return demoUser;
   }
@@ -157,9 +155,7 @@ export const initializeAuth = async () => {
       try {
         const user = JSON.parse(demoUserData) as User;
         currentUser = user;
-        setTimeout(() => {
-          authChangeListeners.forEach(listener => listener(user));
-        }, 0);
+        authChangeListeners.forEach(listener => listener(user));
       } catch (e) {
         console.log('Invalid demo user data in localStorage');
         localStorage.removeItem('demo_user');

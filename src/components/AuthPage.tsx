@@ -22,10 +22,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'logi
     setError(null);
     
     try {
-      await signIn(email, password);
+      const result = await signIn(email, password);
+      if (result) {
+        // Login successful - modal will close automatically via auth listener
+        setIsLoading(false);
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -140,9 +143,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'logi
                 <button 
                   type="button"
                   className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    setEmail('admin@sunnydale.com');
-                    setPassword('password123');
+                  onClick={async () => {
+                    try {
+                      await signIn('admin@sunnydale.com', 'password123');
+                    } catch (error) {
+                      setError('Demo login failed');
+                    }
                   }}
                   disabled={isLoading}
                 >
@@ -151,9 +157,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'logi
                 <button 
                   type="button"
                   className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    setEmail('parent@sunnydale.com');
-                    setPassword('password123');
+                  onClick={async () => {
+                    try {
+                      await signIn('parent@sunnydale.com', 'password123');
+                    } catch (error) {
+                      setError('Demo login failed');
+                    }
                   }}
                   disabled={isLoading}
                 >
@@ -162,9 +171,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'logi
                 <button 
                   type="button"
                   className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    setEmail('teacher@sunnydale.com');
-                    setPassword('password123');
+                  onClick={async () => {
+                    try {
+                      await signIn('teacher@sunnydale.com', 'password123');
+                    } catch (error) {
+                      setError('Demo login failed');
+                    }
                   }}
                   disabled={isLoading}
                 >
@@ -173,9 +185,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'logi
                 <button 
                   type="button"
                   className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    setEmail('staff@sunnydale.com');
-                    setPassword('password123');
+                  onClick={async () => {
+                    try {
+                      await signIn('staff@sunnydale.com', 'password123');
+                    } catch (error) {
+                      setError('Demo login failed');
+                    }
                   }}
                   disabled={isLoading}
                 >
