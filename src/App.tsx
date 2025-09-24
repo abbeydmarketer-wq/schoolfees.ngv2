@@ -72,7 +72,6 @@ const App: React.FC = () => {
     useEffect(() => {
         const subscription = onAuthStateChange((user) => {
             setCurrentUser(user);
-            setAuthLoading(false);
             if (user?.role === 'schoolAdmin') setActiveView('Dashboard');
             // Close auth modal on successful login
             if (user) setShowAuthModal(false);
@@ -103,7 +102,7 @@ const App: React.FC = () => {
         return null;
     }, [currentUser, schools, impersonatedSchool]);
 
-    if (isLoading || authLoading) {
+    if (isLoading) {
         return <LoadingSpinner />;
     }
 
