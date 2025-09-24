@@ -722,8 +722,8 @@ class FeeManagementService {
     return this.getMockParentFeeRecords('').filter(record => record.studentId === studentId);
   }
 
-  // Parent Fee Records Management  
-  async getParentFeeRecords(parentId: string): Promise<ParentFeeRecord[]> {
+  // Parent Fee Records Management (by parentId)
+  async getParentFeeRecordsByParent(parentId: string): Promise<ParentFeeRecord[]> {
     const supabase = getSupabase();
     
     if (supabase) {
@@ -742,10 +742,10 @@ class FeeManagementService {
     }
 
     // Return mock data for offline mode
-    return this.getMockParentFeeRecords(parentId);
+    return this.getMockParentFeeRecordsByParent(parentId);
   }
 
-  private getMockParentFeeRecords(parentId: string): ParentFeeRecord[] {
+  private getMockParentFeeRecordsByParent(parentId: string): ParentFeeRecord[] {
     // Generate mock fee records for the parent's children
     return [
       {

@@ -157,7 +157,7 @@ const App: React.FC = () => {
             return <TeacherDashboard school={activeSchool} currentUser={currentUser} onLogout={handleLogout} />;
         }
         if (currentUser.role === 'staff') {
-            return <StaffDashboard school={activeSchool} currentUser={currentUser} onLogout={handleLogout} />;
+            return <StaffDashboard school={activeSchool} currentUser={currentUser} onLogout={handleLogout} refreshData={refreshData} />;
         }
     }
 
