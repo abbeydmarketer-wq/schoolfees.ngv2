@@ -6,14 +6,15 @@ import SignUpPage from './SignUpPage';
 
 interface AuthPageProps {
   platformConfig: PlatformConfig;
+  initialMode?: 'login' | 'register';
 }
 
-const AuthPage: React.FC<AuthPageProps> = ({ platformConfig }) => {
+const AuthPage: React.FC<AuthPageProps> = ({ platformConfig, initialMode = 'login' }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(initialMode === 'register');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

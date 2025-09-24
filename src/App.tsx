@@ -47,6 +47,7 @@ const App: React.FC = () => {
     
     // Auth modal state
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
     // Apply dynamic theme from platformConfig
     const normalizedConfig = platformConfig ? normalizePlatformConfig(platformConfig) : null;
@@ -120,8 +121,14 @@ const App: React.FC = () => {
                 <>
                     <MarketingLandingPage 
                         platformConfig={normalizedConfig}
-                        onSignInClick={() => setShowAuthModal(true)}
-                        onGetStartedClick={() => setShowAuthModal(true)}
+                        onSignInClick={() => {
+                            setAuthModalMode('login');
+                            setShowAuthModal(true);
+                        }}
+                        onGetStartedClick={() => {
+                            setAuthModalMode('register');
+                            setShowAuthModal(true);
+                        }}
                     />
                     
                     {/* Auth Modal */}
@@ -135,7 +142,10 @@ const App: React.FC = () => {
                                 >
                                     ✕
                                 </button>
-                                <AuthPage platformConfig={normalizedConfig} />
+                                <AuthPage 
+                                    platformConfig={normalizedConfig} 
+                                    initialMode={authModalMode}
+                                />
                             </div>
                             <div className="modal-backdrop" onClick={() => setShowAuthModal(false)}>
                                 <button>close</button>
