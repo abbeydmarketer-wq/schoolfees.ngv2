@@ -136,6 +136,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig }) => {
                 >
                   Parent Demo
                 </button>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    setEmail('teacher@sunnydale.com');
+                    setPassword('password123');
+                  }}
+                  disabled={isLoading}
+                >
+                  Teacher Demo
+                </button>
+                <button 
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    setEmail('staff@sunnydale.com');
+                    setPassword('password123');
+                  }}
+                  disabled={isLoading}
+                >
+                  Staff Demo
+                </button>
               </div>
             </div>
 
