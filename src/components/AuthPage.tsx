@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { PlatformConfig } from '../types.ts';
+import { PlatformConfig, NewSchoolRegistrationData } from '../types.ts';
 import { signIn } from '../services/authService.ts';
+import { registerSchool } from '../services/dataService.ts';
+import SignUpPage from './SignUpPage.tsx';
 
 interface AuthPageProps {
   platformConfig: PlatformConfig;
@@ -27,7 +29,27 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig }) => {
     }
   };
 
+  const handleRegister = async (data: NewSchoolRegistrationData & {password: string}) => {
+    try {
+      await registerSchool(data);
+      // After successful registration, automatically sign in
+      await signIn(data.adminEmail, data.password);
+    } catch (error) {
+      throw error; // Let SignUpPage handle the error
+    }
+  };
+
   const { websiteContent } = platformConfig;
+
+  // Show registration form if in registration mode
+  if (isRegistering) {
+    return (
+      <SignUpPage
+        onRegister={handleRegister}
+        onBackToSignIn={() => setIsRegistering(false)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
@@ -42,7 +64,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ platformConfig }) => {
             />
           )}
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            {isRegistering ? 'Create Account' : 'Sign in to your account'}
+            Sign in to your account
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             {websiteContent.tagline}
