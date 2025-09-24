@@ -102,7 +102,7 @@ const mockPlatformConfig: PlatformConfig = {
     },
     theme: {
       primary: '#3b82f6',
-      secondary: '#64748b',
+      secondary: '#059669',
       accent: '#8b5cf6'
     },
     contactInfo: {

@@ -120,7 +120,7 @@ export const mockPlatformConfig: PlatformConfig = {
         },
         theme: {
             primary: '#2563eb',
-            secondary: '#64748b',
+            secondary: '#059669',
             accent: '#8b5cf6'
         },
         contactInfo: {
