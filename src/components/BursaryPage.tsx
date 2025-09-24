@@ -32,7 +32,7 @@ const SubNavButton: React.FC<{
 );
 
 const PaymentVerificationPage: React.FC<{ school: School, refreshData: () => Promise<void> }> = ({ school, refreshData }) => {
-    const pendingPayments = school.students.flatMap(s => s.payments.filter(p => p.status === 'Pending Verification').map(p => ({ ...p, studentName: s.name, studentOutstanding: s.outstandingFees })));
+    const pendingPayments = school.students.flatMap(s => s.payments.filter(p => p.status === 'pending').map(p => ({ ...p, studentName: s.name, studentOutstanding: s.outstandingFees })));
     
     const handleApprove = async (payment: Payment & { studentName: string, studentOutstanding: number }) => {
         try {
@@ -67,7 +67,7 @@ const PaymentVerificationPage: React.FC<{ school: School, refreshData: () => Pro
                                 <p className="text-xs text-gray-500">Date: {new Date(p.date).toLocaleDateString()}</p>
                             </div>
                             <div className="space-x-2">
-                                {p.proofOfPaymentUrl && <a href={p.proofOfPaymentUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 hover:underline">View Proof</a>}
+                                {(p as any).proofOfPaymentUrl && <a href={(p as any).proofOfPaymentUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 hover:underline">View Proof</a>}
                                 <button onClick={() => handleApprove(p)} className="bg-green-100 text-green-800 px-3 py-1 rounded-md text-sm font-semibold hover:bg-green-200">Approve</button>
                                 <button className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-semibold hover:bg-red-200">Reject</button>
                             </div>
