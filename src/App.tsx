@@ -189,12 +189,12 @@ const App: React.FC = () => {
         };
 
         return (
-            <div className="drawer lg:drawer-open bg-base-200">
+            <div className="drawer lg:drawer-open bg-gray-50">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex flex-col">
                     {impersonatedSchool && <ImpersonationBanner schoolName={impersonatedSchool.name} onStop={() => setImpersonatedSchool(null)} />}
                     <Header view={activeView} schoolName={activeSchool.name} adminName={currentUser.name} isImpersonating={!!impersonatedSchool} />
-                    <main className={`flex-grow p-6 pt-24 ${impersonatedSchool ? 'mt-10' : ''}`}>
+                    <main className={`flex-grow p-4 sm:p-6 pt-20 sm:pt-24 min-h-screen ${impersonatedSchool ? 'mt-10' : ''}`}>
                         {renderMainContent()}
                     </main>
                 </div>
