@@ -586,4 +586,166 @@ export interface NewSchoolRegistrationData {
   adminEmail: string;
 }
 
+// SuperAdmin School Billing Management Types
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: string[];
+  maxStudents: number;
+  maxStaff: number;
+  isActive: boolean;
+}
+
+export interface SchoolSubscription {
+  id: string;
+  schoolId: string;
+  planId: string;
+  stripeSubscriptionId?: string;
+  status: 'active' | 'past_due' | 'canceled' | 'unpaid' | 'trialing';
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  trialEnd?: string;
+  cancelAtPeriodEnd: boolean;
+  monthlyRevenue: number;
+  totalRevenue: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SchoolBillingHistory {
+  id: string;
+  schoolId: string;
+  subscriptionId: string;
+  stripeInvoiceId?: string;
+  amount: number;
+  currency: string;
+  status: 'paid' | 'pending' | 'failed' | 'refunded';
+  billingDate: string;
+  paidAt?: string;
+  description: string;
+  paymentMethod?: string;
+}
+
+export interface SchoolUsageMetrics {
+  schoolId: string;
+  currentStudents: number;
+  currentStaff: number;
+  monthlyTransactions: number;
+  storageUsed: number; // in MB
+  apiCallsUsed: number;
+  lastUpdated: string;
+}
+
+// School Admin Fee Management Types
+export interface FeeCategory {
+  id: string;
+  schoolId: string;
+  name: string;
+  description: string;
+  isCompulsory: boolean;
+  applicableClasses: string[];
+  academicYear: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeeStructure {
+  id: string;
+  schoolId: string;
+  categoryId: string;
+  className: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  lateFeeAmount: number;
+  lateFeeType: 'fixed' | 'percentage';
+  allowInstallments: boolean;
+  installmentOptions?: InstallmentPlan[];
+  discounts?: FeeDiscount[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InstallmentPlan {
+  id: string;
+  name: string;
+  numberOfInstallments: number;
+  installmentAmounts: number[];
+  dueDates: string[];
+  processingFee: number;
+}
+
+export interface FeeDiscount {
+  id: string;
+  name: string;
+  type: 'early_payment' | 'sibling' | 'scholarship' | 'bulk_payment';
+  discountType: 'fixed' | 'percentage';
+  discountValue: number;
+  conditions: string[];
+  maxUsage?: number;
+  validFrom: string;
+  validTo: string;
+}
+
+export interface ParentFeeRecord {
+  id: string;
+  schoolId: string;
+  studentId: string;
+  feeStructureId: string;
+  academicYear: string;
+  totalAmount: number;
+  paidAmount: number;
+  outstandingAmount: number;
+  lateFees: number;
+  discountApplied: number;
+  paymentStatus: 'pending' | 'partial' | 'paid' | 'overdue';
+  installmentPlan?: string;
+  nextDueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeePaymentTransaction {
+  id: string;
+  schoolId: string;
+  feeRecordId: string;
+  studentId: string;
+  amount: number;
+  paymentMethod: 'stripe' | 'paystack' | 'flutterwave' | 'bank_transfer' | 'cash';
+  transactionId?: string;
+  stripePaymentIntentId?: string;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  paidAt?: string;
+  notes?: string;
+  processedBy: string;
+  createdAt: string;
+}
+
+// Combined billing dashboard types
+export interface SuperAdminDashboardMetrics {
+  totalSchools: number;
+  activeSubscriptions: number;
+  monthlyRecurringRevenue: number;
+  totalRevenue: number;
+  churnRate: number;
+  averageRevenuePerSchool: number;
+  newSchoolsThisMonth: number;
+  canceledSubscriptionsThisMonth: number;
+}
+
+export interface SchoolAdminFeeMetrics {
+  totalStudents: number;
+  totalFeesCollected: number;
+  outstandingFees: number;
+  collectionRate: number;
+  averageFeePerStudent: number;
+  latePayments: number;
+  thisMonthCollection: number;
+  activeInstallmentPlans: number;
+}
+
 // Export statement removed - using individual exports instead
