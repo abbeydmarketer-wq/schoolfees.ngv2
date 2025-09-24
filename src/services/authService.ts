@@ -1,4 +1,4 @@
-import { getSupabase } from '../../supabaseClient';
+import { getSupabase } from '../supabaseClient';
 
 export interface User {
   id: string;

@@ -1,6 +1,7 @@
 modules = ["nodejs-20", "web"]
 [agent]
 expertMode = true
+integrations = ["javascript_stripe:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
@@ -36,10 +37,6 @@ externalPort = 80
 [[ports]]
 localPort = 38635
 externalPort = 3000
-
-[[ports]]
-localPort = 45935
-externalPort = 3001
 
 [deployment]
 deploymentTarget = "autoscale"
