@@ -1,10 +1,10 @@
 modules = ["nodejs-20", "web"]
-[agent]
-expertMode = true
-integrations = ["javascript_stripe:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
+
+[agent]
+expertMode = true
 
 [workflows]
 runButton = "Project"
@@ -16,10 +16,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Dev Server"
+args = "Frontend Server"
 
 [[workflows.workflow]]
-name = "Dev Server"
+name = "Frontend Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
@@ -35,16 +35,8 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 36659
-externalPort = 3002
-
-[[ports]]
-localPort = 38635
+localPort = 44879
 externalPort = 3000
-
-[[ports]]
-localPort = 44679
-externalPort = 3001
 
 [deployment]
 deploymentTarget = "autoscale"
