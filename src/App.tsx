@@ -4,7 +4,7 @@ import useThemeManager from './hooks/useThemeManager.ts';
 import { CurrentUser, View, School, Student } from './types.ts';
 import { onAuthStateChange, signOut, signIn } from './services/authService.ts';
 import { normalizePlatformConfig } from './utils/normalizePlatformConfig.ts';
-import AuthPage from './components/AuthPage.tsx';
+import AuthPage from './pages/AuthPage.tsx';
 import MarketingLandingPage from './components/MarketingLandingPage.tsx';
 import SchoolLandingPage from './components/SchoolLandingPage.tsx';
 import Dashboard from './components/Dashboard.tsx';
@@ -25,6 +25,7 @@ import ParentDashboard from './components/ParentDashboard.tsx';
 import TeacherDashboard from './components/TeacherDashboard.tsx';
 import StaffDashboard from './components/StaffDashboard.tsx';
 import ImpersonationBanner from './components/ImpersonationBanner.tsx';
+import SuperAdminDashboard from './components/SuperAdminDashboard.tsx';
 
 const LoadingSpinner: React.FC = () => (
     <div className="flex items-center justify-center h-screen bg-base-100">
@@ -45,8 +46,6 @@ const App: React.FC = () => {
     // Super admin impersonation state
     const [impersonatedSchool, setImpersonatedSchool] = useState<School | null>(null);
     
-    // Auth modal state
-    const [showAuthModal, setShowAuthModal] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
     // Apply dynamic theme from platformConfig
@@ -73,8 +72,6 @@ const App: React.FC = () => {
         const subscription = onAuthStateChange((user) => {
             setCurrentUser(user);
             if (user?.role === 'schoolAdmin') setActiveView('Dashboard');
-            // Close auth modal on successful login
-            if (user) setShowAuthModal(false);
         });
         return () => subscription.unsubscribe();
     }, []);
@@ -112,46 +109,26 @@ const App: React.FC = () => {
 
     // Unauthenticated Views
     if (!currentUser) {
+        if (activeView === 'auth') {
+            return <AuthPage platformConfig={normalizedConfig} initialMode={authModalMode} />;
+        }
+
         if (schoolForSubdomain) {
             return <SchoolLandingPage school={schoolForSubdomain} onLogin={handleLogin} />;
         }
         if (normalizedConfig) {
             return (
-                <>
-                    <MarketingLandingPage 
-                        platformConfig={normalizedConfig}
-                        onSignInClick={() => {
-                            setAuthModalMode('login');
-                            setShowAuthModal(true);
-                        }}
-                        onGetStartedClick={() => {
-                            setAuthModalMode('register');
-                            setShowAuthModal(true);
-                        }}
-                    />
-                    
-                    {/* Auth Modal */}
-                    {showAuthModal && (
-                        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-                            <div className="modal-box max-w-md">
-                                <button 
-                                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                                    onClick={() => setShowAuthModal(false)}
-                                    aria-label="Close modal"
-                                >
-                                    ✕
-                                </button>
-                                <AuthPage 
-                                    platformConfig={normalizedConfig} 
-                                    initialMode={authModalMode}
-                                />
-                            </div>
-                            <div className="modal-backdrop" onClick={() => setShowAuthModal(false)}>
-                                <button>close</button>
-                            </div>
-                        </div>
-                    )}
-                </>
+                <MarketingLandingPage
+                    platformConfig={normalizedConfig}
+                    onSignInClick={() => {
+                        setAuthModalMode('login');
+                        setActiveView('auth' as View);
+                    }}
+                    onGetStartedClick={() => {
+                        setAuthModalMode('register');
+                        setActiveView('auth' as View);
+                    }}
+                />
             );
         }
         return <LoadingSpinner />;
@@ -181,7 +158,7 @@ const App: React.FC = () => {
                 case 'Communication': return <CommunicationPage school={activeSchool} platformConfig={normalizedConfig} />;
                 case 'Printing': return <PrintCenter school={activeSchool} platformConfig={normalizedConfig} />;
                 case 'Settings': return <SettingsPage school={activeSchool} refreshData={refreshData} />;
-                case 'AI Insights': return <AiInsightsPage school={activeSchool} plan={normalizedConfig.pricingPlans.find(p => p.id === activeSchool.planId)} onUpgrade={() => alert('Upgrade flow not implemented.')} />;
+                case 'AI Insights': return <AiInsightsPage school={activeSchool} plan={normalizedConfig.pricingPlans.find(p => p.id === activeSchool.planId)} />;
                 case 'Admissions': return <AdmissionsPage school={activeSchool} refreshData={refreshData} onEnrollStudent={handleEnrollStudent} />;
                 case 'Knowledge Base': return <KnowledgeBasePage articles={normalizedConfig.knowledgeBaseArticles} />;
                 case 'Bursary': // Fallback for bursary parent view
@@ -218,8 +195,7 @@ const App: React.FC = () => {
     
     // SuperAdmin View
     if (currentUser.role === 'superAdmin' && normalizedConfig) {
-       // Placeholder for the SuperAdmin CMS dashboard
-        return <div>Super Admin CMS Dashboard not yet implemented.</div>;
+       return <SuperAdminDashboard />;
     }
 
 

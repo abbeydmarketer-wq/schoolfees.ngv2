@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PlatformConfig, NewSchoolRegistrationData } from '../types.ts';
 import { signIn } from '../services/authService.ts';
 import { registerSchool } from '../services/dataService.ts';
-import SignUpPage from './SignUpPage';
+import SignUpPage from './SignUpPage.tsx';
 
 interface AuthPageProps {
   platformConfig: PlatformConfig;
